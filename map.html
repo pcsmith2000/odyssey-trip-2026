@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Summer 2026 — Interactive Journey Map</title>
+<title>Summer 2026 — Map</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <style>
@@ -9,114 +9,144 @@
 *{box-sizing:border-box;}
 html,body{margin:0;height:100%;font-family:'Segoe UI',Helvetica,Arial,sans-serif;}
 #app{display:flex;height:100vh;}
-#side{width:340px;flex:0 0 340px;background:#171f4d;color:#fff;overflow-y:auto;}
-#side .head{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12);}
-#side h1{font-family:Georgia,serif;font-size:24px;margin:0 0 4px;}
-#side .dates{color:var(--ice);font-size:13px;}
-#side .route{color:var(--muted);font-size:12px;margin-top:4px;}
-.leg{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
+#side{width:300px;flex:0 0 300px;background:#171f4d;color:#fff;overflow-y:auto;display:flex;flex-direction:column;}
+#side .head{padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.12);}
+#side h1{font-family:Georgia,serif;font-size:17px;margin:0 0 1px;}
+#side .dates{color:var(--ice);font-size:11px;}
+#side .route{color:var(--muted);font-size:10px;margin-top:2px;}
+#side .back{display:inline-block;color:var(--coral);font-size:10px;text-decoration:none;margin-top:4px;}
+#side .back:hover{text-decoration:underline;}
+.leg{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
 .leg:hover{background:rgba(255,255,255,.07);}
-.leg .top{display:flex;align-items:center;gap:9px;}
-.leg .dot{width:13px;height:13px;border-radius:50%;flex:0 0 13px;}
-.leg .nm{font-weight:700;font-size:15px;}
-.leg .dt{margin-left:auto;font-size:11px;color:var(--coral);font-weight:600;}
-.leg .who{font-size:12px;color:#cdd4ee;margin:5px 0 0 22px;}
-.leg .stay{font-size:11.5px;color:var(--muted);margin:2px 0 0 22px;}
-.leg .stops{font-size:11px;color:#aeb7e0;margin:4px 0 0 22px;font-style:italic;}
+.leg .top{display:flex;align-items:center;gap:8px;}
+.leg .dot{width:11px;height:11px;border-radius:50%;flex:0 0 11px;}
+.leg .nm{font-weight:700;font-size:13px;}
+.leg .dt{margin-left:auto;font-size:10px;color:var(--coral);font-weight:600;}
+.leg .who{font-size:11px;color:#cdd4ee;margin:3px 0 0 19px;}
+.leg .stay{font-size:10.5px;color:var(--muted);margin:1px 0 0 19px;}
+.leg .stops{font-size:10px;color:#aeb7e0;margin:3px 0 0 19px;font-style:italic;}
 #map{flex:1;}
-.foot{padding:14px 18px;font-size:11px;color:var(--muted);}
+.foot{padding:10px 14px;font-size:10px;color:var(--muted);margin-top:auto;}
 .lp b{color:var(--navy);}
-.lp .meta{color:#666;font-size:12px;}
-@media(max-width:760px){#app{flex-direction:column;}#side{width:100%;flex:none;height:42vh;}#map{height:58vh;}}
+.lp .meta{color:#666;font-size:11px;}
+@media(max-width:760px){#app{flex-direction:column;}#side{width:100%;flex:none;height:38vh;}#map{height:62vh;}}
 </style></head>
 <body>
 <div id="app">
   <div id="side">
     <div class="head">
       <h1>Summer 2026</h1>
-      <div class="dates">June 19 – July 14, 2026</div>
-      <div class="route">Naples → Türkiye → The Odyssey → Greece</div>
+      <div class="dates">Jun 19 – Jul 14, 2026</div>
+      <div class="route">Naples → Istanbul → İzmir → Greek Islands → Crete → Ithaca → España → Nürnberg</div>
+      <a class="back" href="index.html">← back to hub</a>
     </div>
     <div id="legs"></div>
-    <div class="foot">Tap a leg to fly there. Solid lines = sailing/ground hops · dashed = flights/transit. Some stays &amp; the Euro&nbsp;Max location are placeholders — tell me the details to lock them in.</div>
+    <div class="foot">Tap a leg to fly there. Solid lines = overland/sea · dashed = flights.</div>
   </div>
   <div id="map"></div>
 </div>
 <script>
 const LEGS = [
-  {phase:"Naples", color:"#E8A33D", dates:"Jun 19–22", who:"Matt · Sam · Grant · Brandel", stay:"Naples — stay TBD",
+  {phase:"🇵🇹 Portugal", color:"#1A7A4A", dates:"Jun 19–22", who:"Grant · Brandel",
+   stay:"Portugal",
+   stops:[{name:"Lisbon, Portugal", lat:38.7223, lng:-9.1393, note:"Grant & Brandel pre-trip"}]},
+
+  {phase:"Naples", color:"#E8A33D", dates:"Jun 19–22", who:"Matt · Sam",
+   stay:"Naples, Italy",
    stops:[{name:"Naples, Italy", lat:40.8518, lng:14.2681, note:"Trip kick-off"}]},
-  {phase:"Istanbul", color:"#1C7293", dates:"Jun 23–25", who:"Peter (flies LA→IST, Jun 23)", stay:"Airbnb, Istanbul",
-   stops:[{name:"Istanbul, Türkiye", lat:41.0082, lng:28.9784, note:"Airbnb"}]},
-  {phase:"İzmir", color:"#E0552B", dates:"Jun 26–27", who:"Crew converging", stay:"İzmir — stay TBD",
-   stops:[{name:"İzmir, Türkiye", lat:38.4237, lng:27.1428, note:"Aegean coast"}]},
-  {phase:"The Odyssey", color:"#1E2761", dates:"Jun 28 – Jul 6", who:"All aboard", stay:"Yacht charter (sailing)",
+
+  {phase:"Istanbul", color:"#1C7293", dates:"Jun 24–25", who:"Peter · Matt · Sam",
+   stay:"Istanbul, Türkiye",
+   stops:[{name:"Istanbul, Türkiye", lat:41.0082, lng:28.9784, note:""}]},
+
+  {phase:"İzmir", color:"#E0552B", dates:"Jun 26–27", who:"Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)",
+   stay:"İzmir, Türkiye",
+   stops:[{name:"İzmir, Türkiye", lat:38.4237, lng:27.1428, note:"Grant & Brandel fly into ADB — picked up Jun 27 morning"}]},
+
+  {phase:"🏝 Greek Islands", color:"#2980B9", dates:"Jun 27–Jul 1", who:"All five",
+   stay:"Island hopping — Çeşme ferry across",
    stops:[
-     {name:"Bodrum", lat:37.0344, lng:27.4305, note:"Embark"},
-     {name:"Kos", lat:36.8932, lng:27.2877, note:"Greek island"},
-     {name:"Datça", lat:36.7333, lng:27.6833, note:"Turkish coast"},
-     {name:"Symi", lat:36.6182, lng:27.8417, note:"Greek island"},
-     {name:"Marmaris", lat:36.8552, lng:28.2741, note:"Turkish coast"},
-     {name:"Rhodes", lat:36.4349, lng:28.2176, note:"Greek island"},
-     {name:"Fethiye", lat:36.6213, lng:29.1164, note:"Disembark"}
+     {name:"Çeşme, Türkiye", lat:38.3234, lng:26.3008, note:"Ferry crossing to Chios"},
+     {name:"Chios, Greece",  lat:38.3683, lng:26.1394, note:""},
+     {name:"Samos, Greece",  lat:37.7519, lng:26.9783, note:""},
+     {name:"Mykonos, Greece",lat:37.4415, lng:25.3616, note:""},
+     {name:"Santorini, Greece",lat:36.3932, lng:25.4615, note:"Heading south to Crete"}
    ]},
-  {phase:"Greece travel", color:"#7C86B8", dates:"Jul 7", who:"Peter · Matt · Sam fly out · Grant · Brandel onward", stay:"In transit",
-   stops:[{name:"Athens, Greece", lat:37.9838, lng:23.7275, note:"Transit hub"}]},
-  {phase:"Euro Max", color:"#3A2E5C", dates:"Jul 8–14", who:"Grant · Brandel", stay:"TBD",
-   stops:[{name:"Euro Max — location TBD", lat:37.9838, lng:24.10, note:"Update me with the real spot"}]}
+
+  {phase:"🏍 Crete", color:"#E67E22", dates:"Jul 1–4", who:"All five",
+   stay:"Crete — motorcycle",
+   stops:[
+     {name:"Heraklion, Crete", lat:35.3387, lng:25.1442, note:"Arrive Jul 1"},
+     {name:"Chania, Crete",    lat:35.5138, lng:24.0180, note:"Riding west"}
+   ]},
+
+  {phase:"⚓ Ithaca", color:"#8E44AD", dates:"Jul 5–7", who:"All five",
+   stay:"Ithaca — Agent Ithaca",
+   stops:[{name:"Ithaca, Greece", lat:38.4167, lng:20.6833, note:"The final destination"}]},
+
+  {phase:"🏍 España", color:"#C0392B", dates:"Jul 7–11", who:"Peter · Matt · Grant · Brandel",
+   stay:"Motorcycle: Málaga → Pamplona",
+   stops:[
+     {name:"Málaga, Spain",  lat:36.7213, lng:-4.4214, note:"Fly in from Ithaca area"},
+     {name:"Pamplona, Spain",lat:42.8125, lng:-1.6458, note:"🐂 Running of the Bulls — Jul 11"}
+   ]},
+
+  {phase:"🍴 San Sebastián", color:"#27AE60", dates:"Jul 12", who:"Peter · Matt · Grant · Brandel",
+   stay:"San Sebastián (Donostia)",
+   stops:[{name:"San Sebastián, Spain", lat:43.3183, lng:-1.9812, note:"Basque Country"}]},
+
+  {phase:"🍺 Nürnberg", color:"#E8A33D", dates:"Jul 13–14", who:"Peter · Matt · Grant · Brandel",
+   stay:"Nürnberg — recovery day",
+   stops:[{name:"Nürnberg, Germany", lat:49.4521, lng:11.0767, note:"Recovery 🍺"}]}
 ];
 
 const map = L.map('map');
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: '&copy; OpenStreetMap contributors'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:18, attribution:'&copy; OpenStreetMap contributors'
 }).addTo(map);
 
 const allLatLng = [];
 const flatStops = [];
-LEGS.forEach((leg, li) => {
-  leg.stops.forEach(s => { flatStops.push({...s, color:leg.color, leg:li, phase:leg.phase, dates:leg.dates, who:leg.who, stay:leg.stay}); });
+LEGS.forEach((leg,li)=>{
+  leg.stops.forEach(s=>{ flatStops.push({...s,color:leg.color,leg:li,phase:leg.phase,dates:leg.dates,who:leg.who,stay:leg.stay}); });
 });
 
-// markers
 const firstMarkerOfLeg = {};
-flatStops.forEach(s => {
-  const m = L.circleMarker([s.lat, s.lng], {
-    radius:8, color:'#fff', weight:2, fillColor:s.color, fillOpacity:1
+flatStops.forEach(s=>{
+  const m = L.circleMarker([s.lat,s.lng],{
+    radius:7, color:'#fff', weight:2, fillColor:s.color, fillOpacity:1
   }).addTo(map);
-  m.bindPopup(`<div class="lp"><b>${s.name}</b><br><span class="meta">${s.phase} · ${s.dates}</span><br>${s.who}<br><b>Stay:</b> ${s.stay}${s.note? '<br><i>'+s.note+'</i>':''}</div>`);
+  m.bindPopup(`<div class="lp"><b>${s.name}</b><br><span class="meta">${s.phase} · ${s.dates}</span><br>${s.who}${s.note?'<br><i>'+s.note+'</i>':''}</div>`);
   if(firstMarkerOfLeg[s.leg]===undefined) firstMarkerOfLeg[s.leg]=m;
   allLatLng.push([s.lat,s.lng]);
 });
 
-// segments: solid within a leg, dashed across legs
 for(let i=0;i<flatStops.length-1;i++){
   const a=flatStops[i], b=flatStops[i+1];
   const sameLeg = a.leg===b.leg;
-  L.polyline([[a.lat,a.lng],[b.lat,b.lng]], {
-    color: sameLeg? a.color : '#8893c0',
-    weight: sameLeg? 4 : 2.5,
-    opacity: sameLeg? 0.9 : 0.7,
-    dashArray: sameLeg? null : '6,8'
+  L.polyline([[a.lat,a.lng],[b.lat,b.lng]],{
+    color: sameLeg? a.color:'#8893c0',
+    weight: sameLeg? 3:2,
+    opacity: sameLeg? 0.85:0.6,
+    dashArray: sameLeg? null:'6,8'
   }).addTo(map);
 }
 
-map.fitBounds(allLatLng, {padding:[50,50]});
+map.fitBounds(allLatLng,{padding:[40,40]});
 
-// sidebar
 const legsEl = document.getElementById('legs');
-LEGS.forEach((leg, li) => {
-  const stopNames = leg.stops.map(s=>s.name.split(',')[0].split(' — ')[0]).join(' · ');
+LEGS.forEach((leg,li)=>{
+  const stopNames = leg.stops.map(s=>s.name.split(',')[0]).join(' · ');
   const d = document.createElement('div');
   d.className='leg';
-  d.innerHTML = `<div class="top"><span class="dot" style="background:${leg.color}"></span><span class="nm">${leg.phase}</span><span class="dt">${leg.dates}</span></div>
+  d.innerHTML=`<div class="top"><span class="dot" style="background:${leg.color}"></span><span class="nm">${leg.phase}</span><span class="dt">${leg.dates}</span></div>
     <div class="who">${leg.who}</div>
     <div class="stay">🛏 ${leg.stay}</div>
-    ${leg.stops.length>1? '<div class="stops">'+stopNames+'</div>':''}`;
-  d.onclick = () => {
-    const s = leg.stops[0];
-    map.flyTo([s.lat, s.lng], leg.stops.length>1?9:11, {duration:.8});
-    setTimeout(()=>firstMarkerOfLeg[li].openPopup(), 850);
+    ${leg.stops.length>1?'<div class="stops">'+stopNames+'</div>':''}`;
+  d.onclick=()=>{
+    const s=leg.stops[0];
+    map.flyTo([s.lat,s.lng],leg.stops.length>1?7:10,{duration:.8});
+    setTimeout(()=>firstMarkerOfLeg[li].openPopup(),850);
   };
   legsEl.appendChild(d);
 });
