@@ -6,6 +6,7 @@
 <title>Summer 2026 — Interactive Map</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="odyssey-overlay.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -174,6 +175,75 @@ html, body { height: 100%; font-family: 'EB Garamond', Georgia, serif; }
 .lp .meta { color: #888; font-size: 12px; font-family: 'EB Garamond', serif; font-style: italic; margin: 2px 0; }
 .lp .note { color: #555; font-size: 12.5px; font-family: 'EB Garamond', serif; }
 
+/* ── ODYSSEY EPIC OVERLAY TOGGLE ──────────────────────────── */
+.epic-section {
+  flex: 0 0 auto;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.epic-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.epic-btn:hover { background: rgba(200,136,28,0.15); }
+.epic-btn.active { background: var(--gold); color: var(--ink); }
+
+.epic-info { display: none; margin-top: 10px; }
+
+.epic-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.epic-dot-high, .epic-dot-mid, .epic-dot-low {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid #1A1209;
+  flex-shrink: 0;
+}
+.epic-dot-high { background: #C8881C; }
+.epic-dot-mid  { background: #D4A84B; }
+.epic-dot-low  { background: #E0C878; }
+.epic-line-samp {
+  display: inline-block;
+  width: 20px; height: 0;
+  border-top: 2px dashed #C8881C;
+  flex-shrink: 0;
+}
+.epic-fit {
+  display: block;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 12px;
+  color: var(--gold);
+  text-decoration: none;
+  margin: 8px 0 6px;
+  transition: color 0.15s;
+}
+.epic-fit:hover { color: var(--parch); }
+.epic-note {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 11px;
+  color: #5A4E38;
+  font-style: italic;
+  line-height: 1.45;
+}
+
 @media (max-width: 760px) {
   #app { flex-direction: column; }
   #side { width: 100%; flex: none; height: 44vh; }
@@ -190,6 +260,17 @@ html, body { height: 100%; font-family: 'EB Garamond', Georgia, serif; }
       <div class="route">Naples · Istanbul · Greek Islands · Crete · Ithaca · Bilbao · Nürnberg</div>
     </div>
     <div class="side-meander"></div>
+    <div class="epic-section">
+      <button class="epic-btn" id="toggle-epic">&#9734; Homer's Odyssey Overlay</button>
+      <div class="epic-info" id="epic-info">
+        <div class="epic-legend-row"><span class="epic-dot-high"></span> Widely accepted location</div>
+        <div class="epic-legend-row"><span class="epic-dot-mid"></span> Debated / ancient tradition</div>
+        <div class="epic-legend-row"><span class="epic-dot-low"></span> Speculative identification</div>
+        <div class="epic-legend-row"><span class="epic-line-samp"></span> Proposed route of Odysseus</div>
+        <a class="epic-fit" href="#" id="fit-epic">Fit map to full epic route &rarr;</a>
+        <p class="epic-note">Locations are one scholarly interpretation. No consensus exists — the geography of the Odyssey remains actively debated.</p>
+      </div>
+    </div>
     <div class="side-legs" id="legs"></div>
     <div class="side-note">Tap a leg to fly there on the map. Solid lines — sailing &amp; ground. Dashed — flights &amp; transit.</div>
     <div class="side-back"><a href="index.html">← Back to Trip Hub</a></div>
@@ -289,6 +370,24 @@ for (let i = 0; i < flatStops.length - 1; i++) {
 }
 
 map.fitBounds(allLL, {padding:[50,50]});
+
+// ── ODYSSEY EPIC OVERLAY ────────────────────────────────────
+const overlay = initOdysseyOverlay(map);
+const epicBtn  = document.getElementById('toggle-epic');
+const epicInfo = document.getElementById('epic-info');
+const fitBtn   = document.getElementById('fit-epic');
+
+epicBtn.addEventListener('click', () => {
+  const nowVisible = overlay.toggle();
+  epicBtn.classList.toggle('active', nowVisible);
+  epicInfo.style.display = nowVisible ? 'block' : 'none';
+  epicBtn.textContent = nowVisible ? "☆ Hide Epic Overlay" : "☆ Homer’s Odyssey Overlay";
+});
+
+fitBtn.addEventListener('click', e => {
+  e.preventDefault();
+  overlay.fitBounds();
+});
 
 // ── SIDEBAR LEGS ────────────────────────────────────────────
 const legsEl = document.getElementById('legs');

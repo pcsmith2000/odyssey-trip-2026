@@ -462,13 +462,6 @@ footer p {
   <div class="hero-meta">
     <div class="hero-dates">June 19 — July 14, 2026</div>
     <div class="hero-route">Naples · Istanbul · Greek Islands · Crete · Ithaca · Bilbao · Nürnberg</div>
-    <div class="hero-crew">
-      <span>Peter</span><span>·</span>
-      <span>Matt</span><span>·</span>
-      <span>Sam</span><span>·</span>
-      <span>Grant</span><span>·</span>
-      <span>Brandel</span>
-    </div>
     <a href="map.html" class="map-btn">Open the Interactive Map →</a>
   </div>
 </div>
@@ -519,21 +512,9 @@ footer p {
   </div>
 </div>
 
-<!-- ═══ CREW ═════════════════════════════════════════════════ -->
-<div class="meander"></div>
-<div class="sec-head">
-  <h2>The Crew</h2>
-  <span class="sec-sub">Five aboard</span>
-</div>
-<div class="content-band">
-  <div class="wrap" style="padding-top:0;padding-bottom:0;">
-    <div class="crew-grid" id="crew-grid"></div>
-  </div>
-</div>
-
 <div class="meander"></div>
 <footer>
-  <p>Trip Hub · Summer 2026 · Peter · Matt · Sam · Grant · Brandel</p>
+  <p>Trip Hub · Summer 2026</p>
 </footer>
 
 <script>
@@ -667,23 +648,56 @@ fill('Brandel', 6,13, 6,14, 'nurnberg');
 //  SLOT-LEVEL OVERRIDES  (m=5→June, m=6→July; s0 inclusive, s1 exclusive)
 //  Slots: 0=12am-6am  1=6am-12pm  2=12pm-6pm  3=6pm-12am
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+//  FLIGHT DETAILS  (keyed by flight number)
+// ─────────────────────────────────────────────────────────────
+const FLIGHT_DETAILS = {
+  'UA1970': {
+    flight: 'UA 1970', airline: 'United Airlines',
+    from: 'Los Angeles (LAX)', to: 'Newark (EWR)',
+    dep: 'Jun 19, 2026 · est. morning',
+    arr: 'Jun 19, 2026 · est. afternoon',
+    res: null, seat: null, cabin: null,
+    notes: 'Connecting to UA 966 · Exact times TBC',
+    confirmed: false,
+  },
+  'UA966': {
+    flight: 'UA 966', airline: 'United Airlines',
+    from: 'Newark (EWR)', to: 'Naples (NAP)',
+    dep: 'Jun 19, 2026 · est. evening',
+    arr: 'Jun 20, 2026 · est. morning',
+    res: null, seat: null, cabin: null,
+    notes: 'Overnight transatlantic · Exact times TBC',
+    confirmed: false,
+  },
+  'TK1880': {
+    flight: 'TK 1880', airline: 'Turkish Airlines',
+    from: 'Naples (NAP)', to: 'Istanbul (IST)',
+    dep: 'Jun 22, 2026 · 20:45',
+    arr: 'Jun 23, 2026 · 00:05',
+    res: 'U3VWXQ', seat: null, cabin: 'Economy — EcoFly',
+    notes: 'Cabin baggage only · 1 × 8 kg',
+    confirmed: true,
+  },
+};
+
 const SLOT_OVERRIDES = [
   // Peter — UA1970 LAX→EWR + UA966 EWR→NAP, Jun 19–20
   //   UA1970 departs LA morning  → slot 1 (6am-12pm)
   //   UA966  departs Newark ~6pm → slot 3 (6pm-midnight), overnight
   //   UA966  arrives Naples ~8am Jun 20 → slot 1 (6am-12pm)
   {person:'Peter', m:5, d:19, s0:0, s1:1, legId:'travel',   label:'🛫 dep. LA'},
-  {person:'Peter', m:5, d:19, s0:1, s1:3, legId:'travel',   label:'✈ UA1970'},
-  {person:'Peter', m:5, d:19, s0:3, s1:4, legId:'travel',   label:'✈ UA966'},
-  {person:'Peter', m:5, d:20, s0:0, s1:2, legId:'travel',   label:'✈ UA966'},
+  {person:'Peter', m:5, d:19, s0:1, s1:3, legId:'travel',   label:'✈ UA1970',    flightKey:'UA1970'},
+  {person:'Peter', m:5, d:19, s0:3, s1:4, legId:'travel',   label:'✈ UA966',     flightKey:'UA966'},
+  {person:'Peter', m:5, d:20, s0:0, s1:2, legId:'travel',   label:'✈ UA966',     flightKey:'UA966'},
   {person:'Peter', m:5, d:20, s0:2, s1:4, legId:'naples',   label:'Naples'},
 
   // Peter — TK1880 NAP→IST  res. U3VWXQ
   //   departs Naples  Jun 22 20:45  → slot 3 (6pm-midnight)
   //   arrives Istanbul Jun 23 00:05 → slot 0 (12am-6am)
   {person:'Peter', m:5, d:22, s0:0, s1:3, legId:'naples',   label:'Naples'},
-  {person:'Peter', m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880'},
-  {person:'Peter', m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST'},
+  {person:'Peter', m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880',   flightKey:'TK1880'},
+  {person:'Peter', m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST', flightKey:'TK1880'},
   {person:'Peter', m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
 ];
 
@@ -708,7 +722,6 @@ function getOverrides(person, m, d) {
         <span style="font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.07em;color:#1A1209;flex:1;">${leg.phase}</span>
         <span style="font-family:'EB Garamond',serif;font-size:13px;color:#8B1A1A;font-style:italic;white-space:nowrap;">${leg.dates}</span>
       </div>
-      <div style="font-family:'EB Garamond',serif;font-size:13.5px;color:#7A6840;font-style:italic;margin-bottom:3px;">${leg.who}</div>
       <div style="font-family:'EB Garamond',serif;font-size:13px;color:#555;margin-bottom:2px;">&#9665; ${leg.stay}</div>
       <div style="font-family:'EB Garamond',serif;font-size:12px;color:#888;font-style:italic;">${leg.stops}</div>
     `;
@@ -891,24 +904,33 @@ WEEKS.forEach(week => {
     row.appendChild(nEl);
 
     // Helper: make a single gantt bar element
-    function makeBar(colStart, colEnd, legId, label) {
+    function makeBar(colStart, colEnd, legId, label, flightKey) {
       const color = legId && LEG_COLORS[legId] ? LEG_COLORS[legId] : '#DDD0A0';
       const bar = document.createElement('div');
+      const hasFlight = flightKey && FLIGHT_DETAILS[flightKey];
       bar.style.cssText =
         'grid-column:' + colStart + '/' + colEnd + ';' +
         'background:' + color + ';' +
         'height:24px;border-radius:3px;' +
         'display:flex;align-items:center;justify-content:center;' +
-        'overflow:hidden;padding:0 4px;';
+        'overflow:hidden;padding:0 4px;' +
+        (hasFlight ? 'cursor:pointer;outline:1px solid rgba(255,255,255,0.35);' : '');
       if (legId) {
-        bar.title = person + ': ' + label;
+        bar.title = hasFlight
+          ? 'Click for ' + FLIGHT_DETAILS[flightKey].flight + ' details'
+          : person + ': ' + label;
         const txt = document.createElement('span');
         txt.style.cssText =
           'font-family:"EB Garamond",serif;font-style:italic;font-size:9px;' +
           'color:rgba(255,255,255,0.92);white-space:nowrap;overflow:hidden;' +
-          'text-overflow:ellipsis;max-width:100%;';
+          'text-overflow:ellipsis;max-width:100%;pointer-events:none;';
         txt.textContent = label;
         bar.appendChild(txt);
+      }
+      if (hasFlight) {
+        bar.addEventListener('mouseenter', () => bar.style.filter = 'brightness(1.2)');
+        bar.addEventListener('mouseleave', () => bar.style.filter = '');
+        bar.addEventListener('click', () => showFlightModal(flightKey));
       }
       return bar;
     }
@@ -924,7 +946,7 @@ WEEKS.forEach(week => {
         ovr.forEach(o => {
           const colStart = i * 4 + o.s0 + 2;
           const colEnd   = i * 4 + o.s1 + 2;
-          row.appendChild(makeBar(colStart, colEnd, o.legId, o.label));
+          row.appendChild(makeBar(colStart, colEnd, o.legId, o.label, o.flightKey));
         });
         i++;
       } else {
