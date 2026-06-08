@@ -994,6 +994,120 @@ CREW_INFO.forEach(c => {
   card.innerHTML = '<div class="crew-name">' + c.name + '</div>';
   crewGrid.appendChild(card);
 });
+
+// ─────────────────────────────────────────────────────────────
+//  FLIGHT DETAIL MODAL
+// ─────────────────────────────────────────────────────────────
+function showFlightModal(flightKey) {
+  const f = FLIGHT_DETAILS[flightKey];
+  if (!f) return;
+
+  document.getElementById('fm-number').textContent  = f.flight;
+  document.getElementById('fm-airline').textContent = f.airline;
+
+  const body = document.getElementById('fm-body');
+  body.innerHTML = '';
+
+  function row(lbl, val) {
+    if (!val) return;
+    const r = document.createElement('div');
+    r.style.cssText = 'display:flex;gap:12px;margin-bottom:11px;align-items:baseline;';
+    r.innerHTML =
+      '<span style="font-family:\'Cinzel\',serif;font-size:9px;letter-spacing:.12em;' +
+      'text-transform:uppercase;color:#8B1A1A;width:84px;flex:0 0 84px;">' + lbl + '</span>' +
+      '<span style="font-family:\'EB Garamond\',serif;font-size:15.5px;color:#1A1209;line-height:1.3;">' + val + '</span>';
+    body.appendChild(r);
+  }
+
+  row('From',    f.from);
+  row('To',      f.to);
+  row('Departs', f.dep);
+  row('Arrives', f.arr);
+  row('Booking', f.res);
+  row('Cabin',   f.cabin);
+  row('Notes',   f.notes);
+
+  // confirmed badge
+  const badge = document.getElementById('fm-badge');
+  badge.style.display = f.confirmed ? 'flex' : 'none';
+
+  const modal = document.getElementById('flight-modal');
+  modal.style.display = 'flex';
+  // prevent body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFlightModal() {
+  document.getElementById('flight-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeFlightModal();
+});
 </script>
+
+<!-- ═══ FLIGHT DETAIL MODAL ════════════════════════════════ -->
+<div id="flight-modal"
+  onclick="if(event.target===this)closeFlightModal()"
+  style="display:none;position:fixed;inset:0;z-index:9999;
+    background:rgba(24,19,10,0.72);
+    align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#EFE3C0;max-width:400px;width:100%;
+    border-radius:2px;overflow:hidden;
+    box-shadow:0 12px 48px rgba(0,0,0,0.55);
+    animation:fm-in 0.18s ease;">
+
+    <!-- header -->
+    <div style="background:#8B1A1A;padding:18px 22px 14px;
+      display:flex;align-items:flex-start;gap:10px;">
+      <div style="flex:1;">
+        <div id="fm-number"
+          style="font-family:'Cinzel',serif;font-weight:700;font-size:22px;
+          color:#fff;letter-spacing:.12em;"></div>
+        <div id="fm-airline"
+          style="font-family:'EB Garamond',serif;font-size:14px;
+          color:rgba(255,255,255,.62);font-style:italic;margin-top:2px;"></div>
+      </div>
+      <button onclick="closeFlightModal()"
+        style="background:none;border:none;color:rgba(255,255,255,.7);
+        font-size:22px;line-height:1;cursor:pointer;padding:0 2px;
+        font-family:'Cinzel',serif;transition:color .15s;"
+        onmouseenter="this.style.color='#fff'"
+        onmouseleave="this.style.color='rgba(255,255,255,.7)'">&times;</button>
+    </div>
+
+    <!-- meander stripe -->
+    <div style="height:8px;
+      background:
+        linear-gradient(135deg,#C8881C 25%,transparent 25%) -4px 0,
+        linear-gradient(225deg,#C8881C 25%,transparent 25%) -4px 0,
+        linear-gradient(315deg,#C8881C 25%,transparent 25%),
+        linear-gradient( 45deg,#C8881C 25%,transparent 25%);
+      background-size:8px 8px;background-color:#8B1A1A;"></div>
+
+    <!-- detail rows -->
+    <div id="fm-body" style="padding:20px 22px 16px;"></div>
+
+    <!-- confirmed badge -->
+    <div id="fm-badge"
+      style="display:none;margin:0 22px 18px;padding:8px 12px;
+      background:rgba(26,122,74,0.12);border-left:3px solid #1A7A4A;
+      align-items:center;gap:8px;">
+      <span style="font-family:'Cinzel',serif;font-size:9px;
+        letter-spacing:.15em;color:#1A7A4A;text-transform:uppercase;">
+        ✓ &nbsp;Booking Confirmed
+      </span>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes fm-in {
+  from { opacity:0; transform: translateY(8px) scale(0.97); }
+  to   { opacity:1; transform: translateY(0)   scale(1);    }
+}
+</style>
+
 </body>
 </html>
