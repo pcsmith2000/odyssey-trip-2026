@@ -559,6 +559,12 @@ const LEG_LABELS = {
   islands:'Greek Islands', crete:'Crete 🏍', ithaca:'Ithaca',
   espana:'España 🏍', nurnberg:'Nürnberg',
 };
+const LEG_SHORT = {
+  portugal:'🇵🇹 PT', naples:'Naples', travel:'✈',
+  istanbul:'IST', izmir:'İzmir', work:'Work',
+  islands:'🏝 Islands', crete:'🏍 Crete', ithaca:'⚓ Ithaca',
+  espana:'🏍 España', nurnberg:'🍺 Nürnb.',
+};
 
 const LEGS_DATA = [
   { id:'portugal', phase:'🇵🇹 Portugal',    color:'#1A7A4A', dates:'Jun 19–22',
@@ -836,8 +842,15 @@ WEEKS.forEach(week => {
       const legId = (SCHEDULE[person] || {})[key];
       const cell = document.createElement('div');
       cell.className = 'm-cell';
-      cell.style.background = legId && LEG_COLORS[legId] ? LEG_COLORS[legId] : '#DDD0A0';
-      if (legId) cell.title = person + ': ' + LEG_LABELS[legId];
+      const cellColor = legId && LEG_COLORS[legId] ? LEG_COLORS[legId] : '#DDD0A0';
+      cell.style.cssText = 'background:' + cellColor + ';display:flex;align-items:center;justify-content:center;overflow:hidden;';
+      if (legId) {
+        cell.title = person + ': ' + LEG_LABELS[legId];
+        const lbl = document.createElement('span');
+        lbl.style.cssText = 'font-family:"EB Garamond",serif;font-size:8px;font-style:italic;color:rgba(255,255,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 3px;max-width:100%;text-align:center;';
+        lbl.textContent = LEG_SHORT[legId] || LEG_LABELS[legId];
+        cell.appendChild(lbl);
+      }
       row.appendChild(cell);
     });
 
