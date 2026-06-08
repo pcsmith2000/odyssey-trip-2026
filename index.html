@@ -668,6 +668,16 @@ fill('Brandel', 6,13, 6,14, 'nurnberg');
 //  Slots: 0=12am-6am  1=6am-12pm  2=12pm-6pm  3=6pm-12am
 // ─────────────────────────────────────────────────────────────
 const SLOT_OVERRIDES = [
+  // Peter — UA1970 LAX→EWR + UA966 EWR→NAP, Jun 19–20
+  //   UA1970 departs LA morning  → slot 1 (6am-12pm)
+  //   UA966  departs Newark ~6pm → slot 3 (6pm-midnight), overnight
+  //   UA966  arrives Naples ~8am Jun 20 → slot 1 (6am-12pm)
+  {person:'Peter', m:5, d:19, s0:0, s1:1, legId:'travel',   label:'🛫 dep. LA'},
+  {person:'Peter', m:5, d:19, s0:1, s1:3, legId:'travel',   label:'✈ UA1970'},
+  {person:'Peter', m:5, d:19, s0:3, s1:4, legId:'travel',   label:'✈ UA966'},
+  {person:'Peter', m:5, d:20, s0:0, s1:2, legId:'travel',   label:'✈ UA966'},
+  {person:'Peter', m:5, d:20, s0:2, s1:4, legId:'naples',   label:'Naples'},
+
   // Peter — TK1880 NAP→IST  res. U3VWXQ
   //   departs Naples  Jun 22 20:45  → slot 3 (6pm-midnight)
   //   arrives Istanbul Jun 23 00:05 → slot 0 (12am-6am)
@@ -712,7 +722,7 @@ function getOverrides(person, m, d) {
 // ─────────────────────────────────────────────────────────────
 const CAL_DATA = {
   // June
-  '5-19':{bg:'#F2E4CA',bl:'#D4A030',chip:'Naples',         cc:'#D4A030'},
+  '5-19':{bg:'#E8E4D8',bl:'#8291AE',chip:'✈ UA1970/966',   cc:'#8291AE'},
   '5-20':{bg:'#F2E4CA',bl:'#D4A030'},
   '5-21':{bg:'#F2E4CA',bl:'#D4A030'},
   '5-22':{bg:'#F2E4CA',bl:'#D4A030',chip:'✈ TK1880 20:45', cc:'#8291AE'},
