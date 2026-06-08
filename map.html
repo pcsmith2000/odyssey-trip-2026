@@ -37,7 +37,7 @@ html,body{margin:0;height:100%;font-family:'Segoe UI',Helvetica,Arial,sans-serif
     <div class="head">
       <h1>Summer 2026</h1>
       <div class="dates">Jun 19 – Jul 14, 2026</div>
-      <div class="route">Naples → Istanbul → İzmir → Greek Islands → Crete → Ithaca → España → Nürnberg</div>
+      <div class="route">Naples → Istanbul → İzmir → Greek Islands → Crete → Ithaca → Bilbao 🏍 → Nürnberg</div>
       <a class="back" href="index.html">← back to hub</a>
     </div>
     <div id="legs"></div>
@@ -84,16 +84,15 @@ const LEGS = [
    stay:"Ithaca — Agent Ithaca",
    stops:[{name:"Ithaca, Greece", lat:38.4167, lng:20.6833, note:"The final destination"}]},
 
-  {phase:"🏍 España", color:"#C0392B", dates:"Jul 7–11", who:"Peter · Matt · Grant · Brandel",
-   stay:"Motorcycle: Málaga → Pamplona",
+  {phase:"🏍 España", color:"#C0392B", dates:"Jul 7–12", who:"Peter · Matt · Grant · Brandel",
+   stay:"Motorcycle: Bilbao → Picos → Pamplona → Donostia → Bilbao",
    stops:[
-     {name:"Málaga, Spain",  lat:36.7213, lng:-4.4214, note:"Fly in from Ithaca area"},
-     {name:"Pamplona, Spain",lat:42.8125, lng:-1.6458, note:"🐂 Running of the Bulls — Jul 11"}
+     {name:"Bilbao, Spain",          lat:43.2630, lng:-2.9350, note:"Fly in from Greece · Jul 7"},
+     {name:"Picos de Europa",        lat:43.1937, lng:-4.8406, note:"Cantabrian mountain riding"},
+     {name:"Pamplona, Spain",        lat:42.8125, lng:-1.6458, note:"🐂 Running of the Bulls · Jul 11"},
+     {name:"San Sebastián (Donostia)",lat:43.3183, lng:-1.9812, note:"Basque Country · Jul 12"},
+     {name:"Bilbao — fly out",       lat:43.2950, lng:-2.9100, note:"Return to Bilbao · fly to Nürnberg Jul 13"}
    ]},
-
-  {phase:"🍴 San Sebastián", color:"#27AE60", dates:"Jul 12", who:"Peter · Matt · Grant · Brandel",
-   stay:"San Sebastián (Donostia)",
-   stops:[{name:"San Sebastián, Spain", lat:43.3183, lng:-1.9812, note:"Basque Country"}]},
 
   {phase:"🍺 Nürnberg", color:"#E8A33D", dates:"Jul 13–14", who:"Peter · Matt · Grant · Brandel",
    stay:"Nürnberg — recovery day",
