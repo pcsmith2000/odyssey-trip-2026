@@ -664,6 +664,24 @@ fill('Brandel', 6, 7, 6,12, 'espana');
 fill('Brandel', 6,13, 6,14, 'nurnberg');
 
 // ─────────────────────────────────────────────────────────────
+//  SLOT-LEVEL OVERRIDES  (m=5→June, m=6→July; s0 inclusive, s1 exclusive)
+//  Slots: 0=12am-6am  1=6am-12pm  2=12pm-6pm  3=6pm-12am
+// ─────────────────────────────────────────────────────────────
+const SLOT_OVERRIDES = [
+  // Peter — TK1880 NAP→IST  res. U3VWXQ
+  //   departs Naples  Jun 22 20:45  → slot 3 (6pm-midnight)
+  //   arrives Istanbul Jun 23 00:05 → slot 0 (12am-6am)
+  {person:'Peter', m:5, d:22, s0:0, s1:3, legId:'naples',   label:'Naples'},
+  {person:'Peter', m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880'},
+  {person:'Peter', m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST'},
+  {person:'Peter', m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
+];
+
+function getOverrides(person, m, d) {
+  return SLOT_OVERRIDES.filter(o => o.person === person && o.m === m && o.d === d);
+}
+
+// ─────────────────────────────────────────────────────────────
 //  RENDER: LEGS
 // ─────────────────────────────────────────────────────────────
 (function() {
@@ -862,24 +880,8 @@ WEEKS.forEach(week => {
     nEl.textContent = person;
     row.appendChild(nEl);
 
-    // Collect contiguous leg runs within this week
-    let i = 0;
-    while (i < N) {
-      const key = week.dates[i].m + '-' + week.dates[i].d;
-      const legId = (SCHEDULE[person] || {})[key];
-
-      // Extend run as far as leg matches
-      let j = i;
-      while (j + 1 < N) {
-        const nk = week.dates[j+1].m + '-' + week.dates[j+1].d;
-        if ((SCHEDULE[person] || {})[nk] !== legId) break;
-        j++;
-      }
-
-      // Bar spans day i..j (full days = 4 slots each)
-      // Column offset +2 because col 1 = name
-      const colStart = i * 4 + 2;
-      const colEnd   = j * 4 + 6;  // exclusive end after 4 slots of day j
+    // Helper: make a single gantt bar element
+    function makeBar(colStart, colEnd, legId, label) {
       const color = legId && LEG_COLORS[legId] ? LEG_COLORS[legId] : '#DDD0A0';
       const bar = document.createElement('div');
       bar.style.cssText =
@@ -889,17 +891,50 @@ WEEKS.forEach(week => {
         'display:flex;align-items:center;justify-content:center;' +
         'overflow:hidden;padding:0 4px;';
       if (legId) {
-        bar.title = person + ': ' + LEG_LABELS[legId];
+        bar.title = person + ': ' + label;
         const txt = document.createElement('span');
         txt.style.cssText =
           'font-family:"EB Garamond",serif;font-style:italic;font-size:9px;' +
           'color:rgba(255,255,255,0.92);white-space:nowrap;overflow:hidden;' +
           'text-overflow:ellipsis;max-width:100%;';
-        txt.textContent = LEG_SHORT[legId] || LEG_LABELS[legId];
+        txt.textContent = label;
         bar.appendChild(txt);
       }
-      row.appendChild(bar);
-      i = j + 1;
+      return bar;
+    }
+
+    // Collect contiguous leg runs within this week
+    let i = 0;
+    while (i < N) {
+      const date = week.dates[i];
+      const ovr = getOverrides(person, date.m, date.d);
+
+      if (ovr.length > 0) {
+        // Slot-level override for this day: render each slot segment
+        ovr.forEach(o => {
+          const colStart = i * 4 + o.s0 + 2;
+          const colEnd   = i * 4 + o.s1 + 2;
+          row.appendChild(makeBar(colStart, colEnd, o.legId, o.label));
+        });
+        i++;
+      } else {
+        // Full-day: extend run as far as leg matches (and no override on next day)
+        const key = date.m + '-' + date.d;
+        const legId = (SCHEDULE[person] || {})[key];
+        let j = i;
+        while (j + 1 < N) {
+          const nd = week.dates[j+1];
+          const nk = nd.m + '-' + nd.d;
+          if ((SCHEDULE[person] || {})[nk] !== legId) break;
+          if (getOverrides(person, nd.m, nd.d).length > 0) break;
+          j++;
+        }
+        const colStart = i * 4 + 2;
+        const colEnd   = j * 4 + 6;
+        const label = LEG_SHORT[legId] || LEG_LABELS[legId] || '';
+        row.appendChild(makeBar(colStart, colEnd, legId, label));
+        i = j + 1;
+      }
     }
 
     inner.appendChild(row);
