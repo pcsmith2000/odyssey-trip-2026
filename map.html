@@ -1,153 +1,319 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Summer 2026 — Map</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Summer 2026 — Interactive Map</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1E2761;--ice:#CADCFC;--coral:#F96167;--muted:#9aa3c4;}
-*{box-sizing:border-box;}
-html,body{margin:0;height:100%;font-family:'Segoe UI',Helvetica,Arial,sans-serif;}
-#app{display:flex;height:100vh;}
-#side{width:300px;flex:0 0 300px;background:#171f4d;color:#fff;overflow-y:auto;display:flex;flex-direction:column;}
-#side .head{padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.12);}
-#side h1{font-family:Georgia,serif;font-size:17px;margin:0 0 1px;}
-#side .dates{color:var(--ice);font-size:11px;}
-#side .route{color:var(--muted);font-size:10px;margin-top:2px;}
-#side .back{display:inline-block;color:var(--coral);font-size:10px;text-decoration:none;margin-top:4px;}
-#side .back:hover{text-decoration:underline;}
-.leg{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s;}
-.leg:hover{background:rgba(255,255,255,.07);}
-.leg .top{display:flex;align-items:center;gap:8px;}
-.leg .dot{width:11px;height:11px;border-radius:50%;flex:0 0 11px;}
-.leg .nm{font-weight:700;font-size:13px;}
-.leg .dt{margin-left:auto;font-size:10px;color:var(--coral);font-weight:600;}
-.leg .who{font-size:11px;color:#cdd4ee;margin:3px 0 0 19px;}
-.leg .stay{font-size:10.5px;color:var(--muted);margin:1px 0 0 19px;}
-.leg .stops{font-size:10px;color:#aeb7e0;margin:3px 0 0 19px;font-style:italic;}
-#map{flex:1;}
-.foot{padding:10px 14px;font-size:10px;color:var(--muted);margin-top:auto;}
-.lp b{color:var(--navy);}
-.lp .meta{color:#666;font-size:11px;}
-@media(max-width:760px){#app{flex-direction:column;}#side{width:100%;flex:none;height:38vh;}#map{height:62vh;}}
-</style></head>
+:root {
+  --gold:     #C8881C;
+  --crimson:  #8B1A1A;
+  --slate:    #7D90AE;
+  --ink:      #1A1209;
+  --parch:    #EFE3C0;
+  --parch2:   #DDD0A0;
+  --muted:    #B0A080;
+  --sidebar:  #18130A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'EB Garamond', Georgia, serif; }
+
+#app { display: flex; height: 100vh; }
+
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+#side {
+  width: 320px;
+  flex: 0 0 320px;
+  background: var(--sidebar);
+  color: var(--parch);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.side-head {
+  background: var(--crimson);
+  padding: 18px 20px 14px;
+  flex: 0 0 auto;
+}
+.side-head h1 {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  color: #fff;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+.side-head .dates {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: rgba(255,255,255,0.65);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.side-head .route {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  font-style: italic;
+}
+
+/* meander divider */
+.side-meander {
+  height: 8px;
+  flex: 0 0 8px;
+  background:
+    linear-gradient(135deg, var(--gold) 25%, transparent 25%) -4px 0,
+    linear-gradient(225deg, var(--gold) 25%, transparent 25%) -4px 0,
+    linear-gradient(315deg, var(--gold) 25%, transparent 25%),
+    linear-gradient( 45deg, var(--gold) 25%, transparent 25%);
+  background-size: 8px 8px;
+  background-color: var(--crimson);
+}
+
+.side-legs { flex: 1; overflow-y: auto; }
+
+/* scrollbar */
+.side-legs::-webkit-scrollbar { width: 4px; }
+.side-legs::-webkit-scrollbar-track { background: var(--sidebar); }
+.side-legs::-webkit-scrollbar-thumb { background: #3A2E20; border-radius: 2px; }
+
+.leg-item {
+  padding: 14px 18px 14px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s;
+}
+.leg-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--leg-color, #888);
+}
+.leg-item:hover { background: rgba(255,255,255,0.05); }
+.leg-item.active { background: rgba(255,255,255,0.09); }
+
+.leg-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.leg-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--parch);
+  flex: 1;
+}
+.leg-dates {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: var(--gold);
+  font-style: italic;
+  white-space: nowrap;
+}
+.leg-who {
+  font-family: 'EB Garamond', serif;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 2px;
+}
+.leg-stay {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: #8A7A60;
+  margin-bottom: 1px;
+}
+.leg-stops {
+  font-family: 'EB Garamond', serif;
+  font-size: 11.5px;
+  color: #6A5C48;
+  font-style: italic;
+}
+
+.side-back {
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.side-back a {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.side-back a:hover { color: var(--parch); }
+
+.side-note {
+  padding: 10px 18px 14px;
+  font-family: 'EB Garamond', serif;
+  font-size: 11.5px;
+  color: #5A4E38;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── MAP ──────────────────────────────────────────────────── */
+#map { flex: 1; }
+
+/* Leaflet popup custom style */
+.lp b { color: var(--ink); font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; }
+.lp .meta { color: #888; font-size: 12px; font-family: 'EB Garamond', serif; font-style: italic; margin: 2px 0; }
+.lp .note { color: #555; font-size: 12.5px; font-family: 'EB Garamond', serif; }
+
+@media (max-width: 760px) {
+  #app { flex-direction: column; }
+  #side { width: 100%; flex: none; height: 44vh; }
+  #map { height: 56vh; }
+}
+</style>
+</head>
 <body>
 <div id="app">
   <div id="side">
-    <div class="head">
-      <h1>Summer 2026</h1>
-      <div class="dates">Jun 19 – Jul 14, 2026</div>
-      <div class="route">Naples → Istanbul → İzmir → Greek Islands → Crete → Ithaca → Bilbao 🏍 → Nürnberg</div>
-      <a class="back" href="index.html">← back to hub</a>
+    <div class="side-head">
+      <h1>The Oddysey</h1>
+      <div class="dates">June 19 – July 14, 2026</div>
+      <div class="route">Naples · Istanbul · Greek Islands · Crete · Ithaca · Bilbao · Nürnberg</div>
     </div>
-    <div id="legs"></div>
-    <div class="foot">Tap a leg to fly there. Solid lines = overland/sea · dashed = flights.</div>
+    <div class="side-meander"></div>
+    <div class="side-legs" id="legs"></div>
+    <div class="side-note">Tap a leg to fly there on the map. Solid lines — sailing &amp; ground. Dashed — flights &amp; transit.</div>
+    <div class="side-back"><a href="index.html">← Back to Trip Hub</a></div>
   </div>
   <div id="map"></div>
 </div>
+
 <script>
 const LEGS = [
-  {phase:"🇵🇹 Portugal", color:"#1A7A4A", dates:"Jun 19–22", who:"Grant · Brandel",
-   stay:"Portugal",
-   stops:[{name:"Lisbon, Portugal", lat:38.7223, lng:-9.1393, note:"Grant & Brandel pre-trip"}]},
-
-  {phase:"Naples", color:"#E8A33D", dates:"Jun 19–22", who:"Matt · Sam",
-   stay:"Naples, Italy",
-   stops:[{name:"Naples, Italy", lat:40.8518, lng:14.2681, note:"Trip kick-off"}]},
-
-  {phase:"Istanbul", color:"#1C7293", dates:"Jun 23–25", who:"Peter · Matt · Sam",
-   stay:"Istanbul, Türkiye",
-   stops:[{name:"Istanbul, Türkiye", lat:41.0082, lng:28.9784, note:"Peter: TK1880 NAP→IST arr. 00:05 Jun 23 · res. U3VWXQ"}]},
-
-  {phase:"İzmir", color:"#E0552B", dates:"Jun 26–27", who:"Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)",
-   stay:"İzmir, Türkiye",
-   stops:[{name:"İzmir, Türkiye", lat:38.4237, lng:27.1428, note:"Grant & Brandel fly into ADB — picked up Jun 27 morning"}]},
-
-  {phase:"🏝 Greek Islands", color:"#2980B9", dates:"Jun 27–Jul 1", who:"All five",
-   stay:"Island hopping — Çeşme ferry across",
-   stops:[
-     {name:"Çeşme, Türkiye", lat:38.3234, lng:26.3008, note:"Ferry crossing to Chios"},
-     {name:"Chios, Greece",  lat:38.3683, lng:26.1394, note:""},
-     {name:"Samos, Greece",  lat:37.7519, lng:26.9783, note:""},
-     {name:"Mykonos, Greece",lat:37.4415, lng:25.3616, note:""},
-     {name:"Santorini, Greece",lat:36.3932, lng:25.4615, note:"Heading south to Crete"}
-   ]},
-
-  {phase:"🏍 Crete", color:"#E67E22", dates:"Jul 1–4", who:"All five",
-   stay:"Crete — motorcycle",
-   stops:[
-     {name:"Heraklion, Crete", lat:35.3387, lng:25.1442, note:"Arrive Jul 1"},
-     {name:"Chania, Crete",    lat:35.5138, lng:24.0180, note:"Riding west"}
-   ]},
-
-  {phase:"⚓ Ithaca", color:"#8E44AD", dates:"Jul 5–7", who:"All five",
-   stay:"Ithaca — Agent Ithaca",
-   stops:[{name:"Ithaca, Greece", lat:38.4167, lng:20.6833, note:"The final destination"}]},
-
-  {phase:"🏍 España", color:"#C0392B", dates:"Jul 7–12", who:"Peter · Matt · Grant · Brandel",
-   stay:"Motorcycle: Bilbao → Picos → Pamplona → Donostia → Bilbao",
-   stops:[
-     {name:"Bilbao, Spain",          lat:43.2630, lng:-2.9350, note:"Fly in from Greece · Jul 7"},
-     {name:"Picos de Europa",        lat:43.1937, lng:-4.8406, note:"Cantabrian mountain riding"},
-     {name:"Pamplona, Spain",        lat:42.8125, lng:-1.6458, note:"🐂 Running of the Bulls · Jul 11"},
-     {name:"San Sebastián (Donostia)",lat:43.3183, lng:-1.9812, note:"Basque Country · Jul 12"},
-     {name:"Bilbao — fly out",       lat:43.2950, lng:-2.9100, note:"Return to Bilbao · fly to Nürnberg Jul 13"}
-   ]},
-
-  {phase:"🍺 Nürnberg", color:"#E8A33D", dates:"Jul 13–14", who:"Peter · Matt · Grant · Brandel",
-   stay:"Nürnberg — recovery day",
-   stops:[{name:"Nürnberg, Germany", lat:49.4521, lng:11.0767, note:"Recovery 🍺"}]}
+  { phase:'🇵🇹 Portugal',    color:'#1A7A4A', dates:'Jun 19–22',
+    who:'Grant · Brandel', stay:'Portugal',
+    stops:[{name:'Lisbon, Portugal', lat:38.7223, lng:-9.1393, note:'Grant & Brandel pre-trip'}] },
+  { phase:'Naples',          color:'#D4A030', dates:'Jun 19–22',
+    who:'Peter · Matt · Sam', stay:'Naples, Italy',
+    stops:[{name:'Naples, Italy', lat:40.8518, lng:14.2681, note:'Trip kick-off'}] },
+  { phase:'Istanbul',        color:'#1C7293', dates:'Jun 23–25',
+    who:'Peter · Matt · Sam', stay:'Istanbul, Türkiye',
+    stops:[{name:'Istanbul, Türkiye', lat:41.0082, lng:28.9784, note:'Peter: TK1880 NAP→IST arr. 00:05 Jun 23 · res. U3VWXQ'}] },
+  { phase:'İzmir',           color:'#C04020', dates:'Jun 26–27',
+    who:'Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)', stay:'İzmir, Türkiye',
+    stops:[{name:'İzmir, Türkiye', lat:38.4237, lng:27.1428, note:'Grant & Brandel fly into ADB — picked up Jun 27 morning'}] },
+  { phase:'🏝 Greek Islands', color:'#2980B9', dates:'Jun 28–Jul 1',
+    who:'All five', stay:'Island hopping — Çeşme ferry across',
+    stops:[
+      {name:'Çeşme, Türkiye',     lat:38.3234, lng:26.3008, note:'Ferry crossing to Chios'},
+      {name:'Chios, Greece',      lat:38.3683, lng:26.1394, note:''},
+      {name:'Samos, Greece',      lat:37.7519, lng:26.9783, note:''},
+      {name:'Mykonos, Greece',    lat:37.4415, lng:25.3616, note:''},
+      {name:'Santorini, Greece',  lat:36.3932, lng:25.4615, note:'Heading south to Crete'},
+    ]},
+  { phase:'🏍 Crete',         color:'#E67E22', dates:'Jul 1–4',
+    who:'All five', stay:'Crete — motorcycle',
+    stops:[
+      {name:'Heraklion, Crete',  lat:35.3387, lng:25.1442, note:'Arrive Jul 1'},
+      {name:'Chania, Crete',     lat:35.5138, lng:24.0180, note:'Riding west'},
+    ]},
+  { phase:'⚓ Ithaca',        color:'#8E44AD', dates:'Jul 5–7',
+    who:'All five', stay:'Ithaca — Agent Ithaca',
+    stops:[{name:'Ithaca, Greece', lat:38.4167, lng:20.6833, note:'The final destination'}] },
+  { phase:'🏍 España',        color:'#C0392B', dates:'Jul 7–12',
+    who:'Peter · Matt · Grant · Brandel', stay:'Bilbao → Picos → Pamplona → Donostia → Bilbao',
+    stops:[
+      {name:'Bilbao, Spain',              lat:43.2630, lng:-2.9350, note:'Fly in from Greece · Jul 7'},
+      {name:'Picos de Europa',            lat:43.1937, lng:-4.8406, note:'Cantabrian mountain riding'},
+      {name:'Pamplona, Spain',            lat:42.8125, lng:-1.6458, note:'🐂 Running of the Bulls · Jul 11'},
+      {name:'San Sebastián (Donostia)',   lat:43.3183, lng:-1.9812, note:'Basque Country · Jul 12'},
+      {name:'Bilbao — fly out',           lat:43.2950, lng:-2.9100, note:'Return to Bilbao · fly to Nürnberg Jul 13'},
+    ]},
+  { phase:'🍺 Nürnberg',      color:'#D4A030', dates:'Jul 13–14',
+    who:'Peter · Matt · Grant · Brandel', stay:'Nürnberg — recovery day',
+    stops:[{name:'Nürnberg, Germany', lat:49.4521, lng:11.0767, note:'Recovery 🍺'}] },
 ];
 
+// ── MAP INIT ────────────────────────────────────────────────
 const map = L.map('map');
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:18, attribution:'&copy; OpenStreetMap contributors'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-const allLatLng = [];
+// Flatten stops
 const flatStops = [];
-LEGS.forEach((leg,li)=>{
-  leg.stops.forEach(s=>{ flatStops.push({...s,color:leg.color,leg:li,phase:leg.phase,dates:leg.dates,who:leg.who,stay:leg.stay}); });
+LEGS.forEach((leg, li) => {
+  leg.stops.forEach(s => flatStops.push({...s, color:leg.color, li, phase:leg.phase, dates:leg.dates, who:leg.who, stay:leg.stay}));
 });
 
-const firstMarkerOfLeg = {};
-flatStops.forEach(s=>{
-  const m = L.circleMarker([s.lat,s.lng],{
-    radius:7, color:'#fff', weight:2, fillColor:s.color, fillOpacity:1
+// Markers
+const firstMarker = {};
+const allLL = [];
+flatStops.forEach(s => {
+  const m = L.circleMarker([s.lat, s.lng], {
+    radius: 8, color: '#FAF6EC', weight: 2,
+    fillColor: s.color, fillOpacity: 1
   }).addTo(map);
-  m.bindPopup(`<div class="lp"><b>${s.name}</b><br><span class="meta">${s.phase} · ${s.dates}</span><br>${s.who}${s.note?'<br><i>'+s.note+'</i>':''}</div>`);
-  if(firstMarkerOfLeg[s.leg]===undefined) firstMarkerOfLeg[s.leg]=m;
-  allLatLng.push([s.lat,s.lng]);
+  m.bindPopup(
+    '<div class="lp">' +
+    '<b>' + s.name + '</b>' +
+    '<div class="meta">' + s.phase + ' · ' + s.dates + '</div>' +
+    '<div class="note">' + s.who + '</div>' +
+    '<div class="note"><b>Stay:</b> ' + s.stay + (s.note ? ' · <i>' + s.note + '</i>' : '') + '</div>' +
+    '</div>'
+  );
+  if (firstMarker[s.li] === undefined) firstMarker[s.li] = m;
+  allLL.push([s.lat, s.lng]);
 });
 
-for(let i=0;i<flatStops.length-1;i++){
-  const a=flatStops[i], b=flatStops[i+1];
-  const sameLeg = a.leg===b.leg;
-  L.polyline([[a.lat,a.lng],[b.lat,b.lng]],{
-    color: sameLeg? a.color:'#8893c0',
-    weight: sameLeg? 3:2,
-    opacity: sameLeg? 0.85:0.6,
-    dashArray: sameLeg? null:'6,8'
+// Lines
+for (let i = 0; i < flatStops.length - 1; i++) {
+  const a = flatStops[i], b = flatStops[i+1];
+  const sameLeg = a.li === b.li;
+  L.polyline([[a.lat,a.lng],[b.lat,b.lng]], {
+    color:     sameLeg ? a.color : '#8291AE',
+    weight:    sameLeg ? 4 : 2.5,
+    opacity:   sameLeg ? 0.88 : 0.6,
+    dashArray: sameLeg ? null : '7,9',
   }).addTo(map);
 }
 
-map.fitBounds(allLatLng,{padding:[40,40]});
+map.fitBounds(allLL, {padding:[50,50]});
 
+// ── SIDEBAR LEGS ────────────────────────────────────────────
 const legsEl = document.getElementById('legs');
-LEGS.forEach((leg,li)=>{
-  const stopNames = leg.stops.map(s=>s.name.split(',')[0]).join(' · ');
+LEGS.forEach((leg, li) => {
+  const stopNames = leg.stops.map(s => s.name.split(',')[0].split(' —')[0]).join(' · ');
   const d = document.createElement('div');
-  d.className='leg';
-  d.innerHTML=`<div class="top"><span class="dot" style="background:${leg.color}"></span><span class="nm">${leg.phase}</span><span class="dt">${leg.dates}</span></div>
-    <div class="who">${leg.who}</div>
-    <div class="stay">🛏 ${leg.stay}</div>
-    ${leg.stops.length>1?'<div class="stops">'+stopNames+'</div>':''}`;
-  d.onclick=()=>{
-    const s=leg.stops[0];
-    map.flyTo([s.lat,s.lng],leg.stops.length>1?7:10,{duration:.8});
-    setTimeout(()=>firstMarkerOfLeg[li].openPopup(),850);
+  d.className = 'leg-item';
+  d.style.setProperty('--leg-color', leg.color);
+  d.innerHTML =
+    '<div class="leg-top">' +
+      '<span class="leg-name">' + leg.phase + '</span>' +
+      '<span class="leg-dates">' + leg.dates + '</span>' +
+    '</div>' +
+    '<div class="leg-who">' + leg.who + '</div>' +
+    '<div class="leg-stay">&#9665; ' + leg.stay + '</div>' +
+    (leg.stops.length > 1 ? '<div class="leg-stops">' + stopNames + '</div>' : '');
+  d.onclick = () => {
+    document.querySelectorAll('.leg-item').forEach(el => el.classList.remove('active'));
+    d.classList.add('active');
+    const s = leg.stops[0];
+    map.flyTo([s.lat, s.lng], leg.stops.length > 1 ? 9 : 11, {duration: 0.9});
+    setTimeout(() => firstMarker[li].openPopup(), 950);
   };
   legsEl.appendChild(d);
 });
 </script>
-</body></html>
+</body>
+</html>

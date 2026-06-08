@@ -1,88 +1,871 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Summer 2026 — Trip Hub</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Summer 2026 — The Oddysey</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1E2761;--ice:#CADCFC;--coral:#F96167;--ink:#222;--muted:#6b7390;--bg:#f4f6fb;}
-*{box-sizing:border-box;}
-body{margin:0;font-family:'Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;}
-.hero{background:linear-gradient(135deg,#1E2761,#33409a);color:#fff;padding:18px 24px 14px;text-align:center;}
-.hero h1{font-family:Georgia,serif;font-size:26px;margin:0 0 2px;letter-spacing:.3px;}
-.hero .dates{font-size:13px;color:var(--ice);margin-bottom:6px;}
-.hero .route{font-size:12px;color:#aeb9e8;margin-bottom:8px;}
-.crew{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;padding:3px 10px;border-radius:20px;margin:2px;font-size:12px;font-weight:600;}
-.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px;}
-.card{background:#fff;border-radius:14px;padding:26px 28px;margin:22px 0;box-shadow:0 2px 14px rgba(30,39,97,.07);}
-h2{font-family:Georgia,serif;color:var(--navy);font-size:26px;margin:0 0 4px;}
-.sub{color:var(--muted);margin:0 0 18px;font-size:14px;}
-/* timeline */
-.leg{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #eef1f7;}
-.leg:last-child{border-bottom:none;}
-.dot{flex:0 0 44px;height:44px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
-.legtop{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;}
-.legname{font-weight:700;font-size:18px;color:var(--navy);}
-.legdate{font-size:13px;color:var(--coral);font-weight:600;}
-.legdet{color:#444;font-size:14px;margin-top:2px;}
-/* calendar */
-.cals{display:flex;gap:26px;flex-wrap:wrap;}
-.month{flex:1;min-width:300px;}
-.month h3{font-family:Georgia,serif;color:var(--coral);text-align:center;font-size:20px;margin:0 0 10px;}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.dow{background:var(--navy);color:#fff;text-align:center;font-size:11px;font-weight:700;padding:6px 0;border-radius:4px;}
-.cell{background:#eef2fb;min-height:62px;border-radius:5px;padding:4px;position:relative;font-size:12px;}
-.cell.blank{background:transparent;}
-.dnum{color:var(--navy);font-weight:600;}
-.chip{display:block;margin-top:3px;color:#fff;font-size:9.5px;font-weight:700;padding:2px 4px;border-radius:3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.legend{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;}
-.lgi{display:flex;align-items:center;gap:6px;font-size:12px;color:#444;}
-.sw{width:14px;height:14px;border-radius:3px;display:inline-block;}
-.map{width:100%;border-radius:10px;border:1px solid #dce5f2;}
-.gscroll{overflow-x:auto;}
-.gantt{min-width:800px;display:flex;flex-direction:column;gap:6px;}
-.grow{display:grid;grid-template-columns:92px 1fr;align-items:center;gap:8px;}
-.gname{font-weight:700;color:var(--navy);font-size:13px;}
-.ghname{font-size:11px;color:#fff;background:var(--navy);padding:8px 6px;border-radius:4px;text-align:center;}
-.gtrack{display:grid;grid-template-columns:repeat(26,1fr);gap:2px;}
-.ghcell{background:var(--navy);color:#fff;font-size:8px;text-align:center;padding:4px 0;border-radius:3px;line-height:1.05;}
-.ghcell.wke{background:#39458a;}
-.gbody{background:#f0f3fa;border-radius:5px;min-height:34px;align-items:center;}
-.gbar{height:26px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;border-radius:4px;padding:0 4px;margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.crewrow{text-align:center;}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:24px;}
-@media(max-width:680px){.hero h1{font-size:34px;}}
-</style></head>
+:root {
+  --gold:      #C8881C;
+  --gold-dark: #A06C10;
+  --parchment: #EFE3C0;
+  --parch2:    #DDD0A0;
+  --crimson:   #8B1A1A;
+  --slate:     #7D90AE;
+  --ink:       #1A1209;
+  --cream:     #FAF6EC;
+  --muted:     #7A6840;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'EB Garamond', Georgia, serif; color: var(--ink); background: var(--cream); line-height: 1.55; }
+
+/* ── MEANDER BORDER ─────────────────────────────────────── */
+.meander {
+  height: 10px;
+  background:
+    linear-gradient(135deg, var(--gold) 25%, transparent 25%) -5px 0,
+    linear-gradient(225deg, var(--gold) 25%, transparent 25%) -5px 0,
+    linear-gradient(315deg, var(--gold) 25%, transparent 25%),
+    linear-gradient( 45deg, var(--gold) 25%, transparent 25%);
+  background-size: 10px 10px;
+  background-color: var(--crimson);
+}
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero { background: var(--gold); overflow: hidden; }
+.hero svg { display: block; width: 100%; max-height: 220px; }
+.hero-title-band { background: var(--crimson); text-align: center; padding: 12px 20px 11px; }
+.hero-title-band h1 {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 52px);
+  color: #fff;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-meta { background: var(--gold); text-align: center; padding: 14px 24px 20px; }
+.hero-dates {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.hero-route {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  opacity: 0.65;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.hero-crew {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-style: italic;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.hero-crew span { margin: 0 5px; }
+.map-btn {
+  display: inline-block;
+  background: var(--crimson);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 11px 28px;
+  transition: background 0.2s;
+}
+.map-btn:hover { background: #6A1010; }
+
+/* ── SECTION HEADER ──────────────────────────────────────── */
+.sec-head {
+  background: var(--crimson);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 10px 40px;
+}
+.sec-head h2 {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.22em;
+  color: #fff;
+  text-transform: uppercase;
+}
+.sec-head .sec-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+}
+.sec-head a {
+  margin-left: auto;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.sec-head a:hover { color: #fff; }
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 30px 28px; }
+.content-band { background: var(--parchment); }
+
+/* ── CALENDAR ────────────────────────────────────────────── */
+.cals { display: flex; gap: 36px; flex-wrap: wrap; }
+.month { flex: 1; min-width: 300px; }
+.month-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  letter-spacing: 0.28em;
+  color: var(--crimson);
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 2px;
+}
+.dow {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  background: var(--ink);
+  color: var(--parchment);
+  text-align: center;
+  padding: 6px 0;
+  text-transform: uppercase;
+}
+.cell {
+  background: #E8DCC0;
+  min-height: 58px;
+  padding: 4px 5px;
+  font-size: 12px;
+}
+.cell.blank { background: transparent; }
+.dnum { font-family: 'Cinzel', serif; color: var(--ink); font-size: 10px; font-weight: 700; }
+.chip {
+  display: block;
+  margin-top: 3px;
+  color: #fff;
+  font-family: 'EB Garamond', serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  padding: 2px 4px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+}
+.legend {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.lgi {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'EB Garamond', serif;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.sw { width: 12px; height: 12px; display: inline-block; flex: 0 0 12px; }
+
+/* ── MATRIX ──────────────────────────────────────────────── */
+.matrix-week { margin-bottom: 28px; }
+.matrix-week-lbl {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 8px 0 6px;
+  border-bottom: 1px solid var(--parch2);
+  margin-bottom: 6px;
+}
+.matrix-scroll { overflow-x: auto; }
+.matrix-inner { min-width: 520px; }
+.m-row {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.m-name {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  text-transform: uppercase;
+}
+.m-day-hdr {
+  background: var(--ink);
+  color: var(--parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  text-align: center;
+  padding: 4px 2px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+.m-cell { height: 28px; }
+
+/* ── CREW ────────────────────────────────────────────────── */
+.crew-grid {
+  display: flex;
+  flex-wrap: wrap;
+  border-left: 1px solid var(--parch2);
+  border-top: 1px solid var(--parch2);
+}
+.crew-card {
+  flex: 1;
+  min-width: 160px;
+  background: var(--parchment);
+  border-right: 1px solid var(--parch2);
+  border-bottom: 1px solid var(--parch2);
+  padding: 26px 20px;
+  text-align: center;
+}
+.crew-name {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.crew-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer {
+  background: var(--gold);
+  padding: 26px 24px;
+  text-align: center;
+}
+footer p {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--ink);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+@media (max-width: 700px) {
+  .hero-title-band h1 { font-size: 38px; }
+  .sec-head { padding: 10px 16px; }
+  .wrap { padding: 20px 16px; }
+}
+</style>
+</head>
 <body>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════ -->
 <div class="hero">
-  <h1>Summer 2026</h1>
-  <div class="dates">June 19 – July 14, 2026</div>
-  <div class="route">Naples → Türkiye → Greece</div>
-  <div><span class="crew">Peter</span><span class="crew">Matt</span><span class="crew">Sam</span><span class="crew">Grant</span><span class="crew">Brandel</span></div>
-  <div style="margin-top:8px;"><a href="map.html" style="display:inline-block;background:var(--coral);color:#fff;text-decoration:none;padding:5px 14px;border-radius:20px;font-weight:700;font-size:12px;">🗺 map →</a></div>
+
+  <!-- Greek ship illustration -->
+  <svg viewBox="0 0 1200 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="1200" height="380" fill="#C8881C"/>
+    <!-- sky wash -->
+    <rect width="1200" height="180" fill="#A06C10" opacity="0.12"/>
+
+    <!-- Sun disc, upper right -->
+    <circle cx="990" cy="72" r="50" fill="#7D90AE" opacity="0.32"/>
+    <circle cx="990" cy="72" r="46" fill="none" stroke="#7D90AE" stroke-width="4" opacity="0.55"/>
+    <g stroke="#7D90AE" stroke-width="2.5" opacity="0.38">
+      <line x1="990" y1="12" x2="990" y2="2"/>
+      <line x1="1044" y1="28" x2="1052" y2="20"/>
+      <line x1="1063" y1="72" x2="1073" y2="72"/>
+      <line x1="1044" y1="116" x2="1052" y2="124"/>
+      <line x1="990" y1="134" x2="990" y2="144"/>
+      <line x1="936" y1="116" x2="928" y2="124"/>
+      <line x1="917" y1="72" x2="907" y2="72"/>
+      <line x1="936" y1="28" x2="928" y2="20"/>
+    </g>
+
+    <!-- Foliage/scrolls upper left (vase-painting style) -->
+    <g fill="none" stroke="#7D90AE" stroke-width="3" opacity="0.52">
+      <path d="M55,52 C65,32 92,38 88,55 C84,70 58,64 62,49 C64,38 88,41 84,56"/>
+      <line x1="55" y1="52" x2="50" y2="74"/>
+      <circle cx="48" cy="77" r="4" fill="#7D90AE" opacity="0.52"/>
+      <path d="M108,36 C118,16 148,22 144,40 C140,57 112,50 116,35 C118,24 144,28 140,43"/>
+      <line x1="108" y1="36" x2="103" y2="60"/>
+      <circle cx="101" cy="63" r="4" fill="#7D90AE" opacity="0.52"/>
+      <path d="M168,24 C178,6 206,13 202,31 C197,48 172,42 175,27"/>
+      <line x1="168" y1="24" x2="163" y2="48"/>
+      <path d="M225,38 C234,22 256,28 252,44 C248,58 226,52 229,39"/>
+      <line x1="225" y1="38" x2="221" y2="56"/>
+      <!-- stem -->
+      <path d="M36,65 Q90,44 142,37 Q188,28 234,42" stroke-width="2" opacity="0.38"/>
+    </g>
+
+    <!-- Right island silhouette -->
+    <path d="M900,205 Q945,168 988,160 Q1030,150 1072,163 Q1115,175 1148,184 Q1200,194 1200,200 L1200,225 Q1100,218 1000,222 Q942,222 900,218 Z" fill="#7D90AE" opacity="0.28"/>
+    <g fill="none" stroke="#7D90AE" stroke-width="2.5" opacity="0.38">
+      <path d="M968,163 L968,149 M962,153 Q968,145 974,153"/>
+      <path d="M1025,152 L1025,138 M1019,142 Q1025,134 1031,142"/>
+      <path d="M1080,162 L1080,148 M1074,152 Q1080,144 1086,152"/>
+    </g>
+
+    <!-- Left coast -->
+    <path d="M0,195 Q42,168 88,175 Q134,158 172,170 Q204,180 214,196 Q162,204 82,202 Q40,200 0,202 Z" fill="#7D90AE" opacity="0.24"/>
+
+    <!-- ── SHIP ── -->
+    <!-- Hull -->
+    <path d="M358,254 Q422,237 600,230 Q778,224 842,250 Q858,266 847,280 Q778,292 600,294 Q422,290 352,273 Q342,262 358,254 Z" fill="#7D90AE"/>
+    <!-- Hull upper rail line -->
+    <path d="M366,254 Q432,242 600,236 Q768,231 838,253" fill="none" stroke="#C8881C" stroke-width="2.5" opacity="0.65"/>
+    <!-- Prow (right) -->
+    <path d="M842,252 Q878,246 898,258 Q904,270 882,280 Q858,286 847,280" fill="#7D90AE"/>
+    <!-- Ram -->
+    <path d="M892,261 L926,258 L926,265 L892,267 Z" fill="#7D90AE"/>
+    <!-- Stern post (left) curving up -->
+    <path d="M360,257 Q336,250 320,258 Q313,270 327,280 Q343,288 360,282" fill="#7D90AE"/>
+    <path d="M320,258 Q306,250 302,238 Q299,226 310,220 Q318,215 325,222" fill="none" stroke="#7D90AE" stroke-width="5.5"/>
+    <!-- Aphlaston curl -->
+    <path d="M310,220 Q300,210 306,199 Q314,191 323,199 Q328,208 320,214" fill="none" stroke="#7D90AE" stroke-width="3.5"/>
+
+    <!-- Oars -->
+    <g stroke="#7D90AE" stroke-width="3.5" opacity="0.88">
+      <line x1="398" y1="280" x2="378" y2="312"/>
+      <line x1="428" y1="282" x2="410" y2="314"/>
+      <line x1="458" y1="284" x2="442" y2="316"/>
+      <line x1="488" y1="285" x2="474" y2="317"/>
+      <line x1="518" y1="286" x2="506" y2="317"/>
+      <line x1="548" y1="286" x2="537" y2="317"/>
+      <line x1="578" y1="286" x2="568" y2="317"/>
+      <line x1="608" y1="286" x2="598" y2="317"/>
+      <line x1="638" y1="285" x2="629" y2="316"/>
+      <line x1="668" y1="284" x2="660" y2="315"/>
+      <line x1="698" y1="282" x2="692" y2="313"/>
+      <line x1="726" y1="280" x2="722" y2="311"/>
+      <line x1="752" y1="278" x2="750" y2="308"/>
+      <line x1="776" y1="275" x2="776" y2="305"/>
+    </g>
+
+    <!-- Mast -->
+    <line x1="588" y1="230" x2="588" y2="72" stroke="#7D90AE" stroke-width="8"/>
+    <!-- Yard -->
+    <line x1="492" y1="94" x2="684" y2="94" stroke="#7D90AE" stroke-width="5.5"/>
+    <!-- Sail (bellied slightly left, wind from right) -->
+    <path d="M496,96 Q482,132 485,177 Q487,190 518,194 L590,196 L662,194 Q694,190 696,177 Q698,132 685,96 Z" fill="#7D90AE" opacity="0.84"/>
+    <!-- Sail brailing lines -->
+    <g stroke="#C8881C" stroke-width="1.5" opacity="0.42">
+      <line x1="538" y1="98" x2="542" y2="194"/>
+      <line x1="590" y1="96" x2="590" y2="196"/>
+      <line x1="642" y1="98" x2="638" y2="194"/>
+    </g>
+    <!-- Stays -->
+    <g stroke="#7D90AE" stroke-width="2" opacity="0.55">
+      <line x1="588" y1="74" x2="492" y2="94"/>
+      <line x1="588" y1="74" x2="684" y2="94"/>
+      <line x1="588" y1="74" x2="898" y2="258"/>
+      <line x1="588" y1="74" x2="308" y2="226"/>
+    </g>
+
+    <!-- Figure: helmsman at stern -->
+    <g fill="#7D90AE">
+      <rect x="460" y="246" width="5" height="12" rx="2"/>
+      <rect x="469" y="246" width="5" height="12" rx="2"/>
+      <rect x="455" y="230" width="16" height="18" rx="1"/>
+      <circle cx="463" cy="224" r="7"/>
+      <path d="M457,219 Q463,211 469,219 L471,213 Q467,205 463,203 Q459,205 455,213 Z"/>
+      <!-- steering oar -->
+      <line x1="455" y1="240" x2="432" y2="272" stroke="#7D90AE" stroke-width="4"/>
+      <path d="M428,270 Q431,277 438,274 Q440,267 434,265 Z"/>
+    </g>
+    <!-- Figure: warrior amidships -->
+    <g fill="#7D90AE">
+      <rect x="500" y="244" width="5" height="12" rx="2"/>
+      <rect x="509" y="244" width="5" height="12" rx="2"/>
+      <rect x="494" y="228" width="18" height="18" rx="1"/>
+      <circle cx="503" cy="222" r="7"/>
+      <path d="M497,217 Q503,209 509,217 L511,211 Q507,203 503,201 Q499,203 495,211 Z"/>
+      <!-- shield -->
+      <circle cx="489" cy="238" r="8" fill="none" stroke="#7D90AE" stroke-width="3"/>
+      <circle cx="489" cy="238" r="5" fill="#7D90AE" opacity="0.55"/>
+      <!-- spear up -->
+      <line x1="520" y1="216" x2="532" y2="192" stroke="#7D90AE" stroke-width="2.5"/>
+      <path d="M532,192 L535,185 L529,191 Z"/>
+    </g>
+    <!-- Figure: lookout at bow -->
+    <g fill="#7D90AE">
+      <rect x="798" y="242" width="5" height="14" rx="2"/>
+      <rect x="807" y="242" width="5" height="14" rx="2"/>
+      <rect x="792" y="225" width="18" height="19" rx="1"/>
+      <circle cx="801" cy="219" r="7"/>
+      <path d="M795,214 Q801,206 807,214 L809,208 Q805,200 801,198 Q797,200 793,208 Z"/>
+      <!-- hand raised to brow -->
+      <rect x="809" y="215" width="9" height="3" rx="1"/>
+      <!-- spear forward -->
+      <line x1="792" y1="214" x2="772" y2="188" stroke="#7D90AE" stroke-width="2.5"/>
+      <path d="M772,188 L775,181 L769,188 Z"/>
+    </g>
+
+    <!-- Dolphins -->
+    <g fill="#7D90AE" opacity="0.9">
+      <path d="M172,302 Q194,280 218,288 Q228,296 222,306 Q212,316 194,310 Q178,304 172,302"/>
+      <path d="M167,300 Q159,286 165,279 Q170,277 176,286" stroke="#7D90AE" stroke-width="2" fill="none"/>
+      <path d="M223,306 Q230,312 228,318 Q221,320 218,314"/>
+    </g>
+    <g fill="#7D90AE" opacity="0.9">
+      <path d="M978,298 Q1000,276 1024,284 Q1034,292 1028,302 Q1018,312 1000,306 Q984,300 978,298"/>
+      <path d="M973,296 Q965,282 971,275 Q976,273 982,282" stroke="#7D90AE" stroke-width="2" fill="none"/>
+      <path d="M1029,302 Q1036,308 1034,314 Q1027,316 1024,310"/>
+    </g>
+
+    <!-- Waves (back → front) -->
+    <path d="M-20,292 C80,268 180,318 300,292 C420,268 520,318 640,292 C760,268 860,318 980,292 C1080,272 1180,302 1220,292 L1220,380 L-20,380 Z" fill="#7D90AE" opacity="0.42"/>
+    <path d="M-20,318 C100,296 200,340 340,318 C480,296 580,340 720,318 C860,296 960,340 1100,318 C1160,308 1200,318 1220,318 L1220,380 L-20,380 Z" fill="#7D90AE" opacity="0.62"/>
+    <path d="M-20,342 C120,320 220,362 380,342 C540,320 640,362 800,342 C960,320 1060,362 1220,342 L1220,380 L-20,380 Z" fill="#7D90AE"/>
+    <!-- Wave crests -->
+    <g stroke="#C8881C" stroke-width="2" fill="none" opacity="0.38">
+      <path d="M58,302 Q88,290 118,302"/>
+      <path d="M198,308 Q228,296 258,308"/>
+      <path d="M338,300 Q368,288 398,300"/>
+      <path d="M698,296 Q728,284 758,296"/>
+      <path d="M852,302 Q882,290 912,302"/>
+      <path d="M1052,298 Q1082,286 1112,298"/>
+    </g>
+  </svg>
+
+  <div class="hero-title-band">
+    <h1>Summer 2026</h1>
+  </div>
+
+  <div class="hero-meta">
+    <div class="hero-dates">June 19 — July 14, 2026</div>
+    <div class="hero-route">Naples · Istanbul · Greek Islands · Crete · Ithaca · Bilbao · Nürnberg</div>
+    <div class="hero-crew">
+      <span>Peter</span><span>·</span>
+      <span>Matt</span><span>·</span>
+      <span>Sam</span><span>·</span>
+      <span>Grant</span><span>·</span>
+      <span>Brandel</span>
+    </div>
+    <a href="map.html" class="map-btn">Open the Interactive Map →</a>
+  </div>
 </div>
-<div class="wrap">
 
-
-  <section class="card">
-    <h2>Calendar</h2>
-    <p class="sub">June & July 2026 — colour-coded by leg.</p>
-    <div class="cals"><div class="month"><h3>June</h3><div class="grid"><div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div><div class="cell blank"></div><div class="cell"><span class="dnum">1</span></div><div class="cell"><span class="dnum">2</span></div><div class="cell"><span class="dnum">3</span></div><div class="cell"><span class="dnum">4</span></div><div class="cell"><span class="dnum">5</span></div><div class="cell"><span class="dnum">6</span></div><div class="cell"><span class="dnum">7</span></div><div class="cell"><span class="dnum">8</span></div><div class="cell"><span class="dnum">9</span></div><div class="cell"><span class="dnum">10</span></div><div class="cell"><span class="dnum">11</span></div><div class="cell"><span class="dnum">12</span></div><div class="cell"><span class="dnum">13</span></div><div class="cell"><span class="dnum">14</span></div><div class="cell"><span class="dnum">15</span></div><div class="cell"><span class="dnum">16</span></div><div class="cell"><span class="dnum">17</span></div><div class="cell"><span class="dnum">18</span></div><div class="cell" style="background:#faecd8;border-left:3px solid #E8A33D"><span class="dnum">19</span><span class="chip" style="background:#E8A33D">🍕 Naples</span></div><div class="cell" style="background:#faecd8;border-left:3px solid #E8A33D"><span class="dnum">20</span></div><div class="cell" style="background:#faecd8;border-left:3px solid #E8A33D"><span class="dnum">21</span></div><div class="cell" style="background:#faecd8;border-left:3px solid #E8A33D"><span class="dnum">22</span><span class="chip" style="background:#7C86B8">✈ TK1880 20:45</span></div><div class="cell" style="background:#d1e2e9;border-left:3px solid #1C7293"><span class="dnum">23</span><span class="chip" style="background:#1C7293">✈ → Istanbul</span></div><div class="cell" style="background:#d1e2e9;border-left:3px solid #1C7293"><span class="dnum">24</span><span class="chip" style="background:#1C7293">🏙 Istanbul</span></div><div class="cell" style="background:#d1e2e9;border-left:3px solid #1C7293"><span class="dnum">25</span></div><div class="cell" style="background:#f8ddd4;border-left:3px solid #E0552B"><span class="dnum">26</span><span class="chip" style="background:#E0552B">🏖 İzmir</span></div><div class="cell" style="background:#f8ddd4;border-left:3px solid #E0552B"><span class="dnum">27</span><span class="chip" style="background:#E0552B">⛴ İzmir→set off</span></div><div class="cell" style="background:#d6eaf8;border-left:3px solid #2980B9"><span class="dnum">28</span></div><div class="cell" style="background:#d6eaf8;border-left:3px solid #2980B9"><span class="dnum">29</span></div><div class="cell" style="background:#d6eaf8;border-left:3px solid #2980B9"><span class="dnum">30</span></div></div></div><div class="month"><h3>July</h3><div class="grid"><div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div><div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div><div class="cell" style="background:#fde8d8;border-left:3px solid #E67E22"><span class="dnum">1</span><span class="chip" style="background:#E67E22">🏍 Crete</span></div><div class="cell" style="background:#fde8d8;border-left:3px solid #E67E22"><span class="dnum">2</span></div><div class="cell" style="background:#fde8d8;border-left:3px solid #E67E22"><span class="dnum">3</span></div><div class="cell" style="background:#fde8d8;border-left:3px solid #E67E22"><span class="dnum">4</span></div><div class="cell" style="background:#e4e6f0;border-left:3px solid #7C86B8"><span class="dnum">5</span><span class="chip" style="background:#7C86B8">⛴ To Ithaca</span></div><div class="cell" style="background:#e4e6f0;border-left:3px solid #7C86B8"><span class="dnum">6</span><span class="chip" style="background:#8E44AD">⚓ Ithaca</span></div><div class="cell" style="background:#e4e6f0;border-left:3px solid #7C86B8"><span class="dnum">7</span><span class="chip" style="background:#7C86B8">✈ fly out</span></div><div class="cell" style="background:#fadbd8;border-left:3px solid #C0392B"><span class="dnum">8</span><span class="chip" style="background:#C0392B">🏍 España</span></div><div class="cell" style="background:#fadbd8;border-left:3px solid #C0392B"><span class="dnum">9</span></div><div class="cell" style="background:#fadbd8;border-left:3px solid #C0392B"><span class="dnum">10</span></div><div class="cell" style="background:#fadbd8;border-left:3px solid #C0392B"><span class="dnum">11</span><span class="chip" style="background:#C0392B">🐂 Pamplona</span></div><div class="cell" style="background:#d5f5e3;border-left:3px solid #27AE60"><span class="dnum">12</span><span class="chip" style="background:#27AE60">🍴 San Sebastián</span></div><div class="cell" style="background:#e4e6f0;border-left:3px solid #7C86B8"><span class="dnum">13</span><span class="chip" style="background:#7C86B8">✈ Nürnberg</span></div><div class="cell" style="background:#faecd8;border-left:3px solid #E8A33D"><span class="dnum">14</span><span class="chip" style="background:#E8A33D">🍺 Nürnberg</span></div><div class="cell"><span class="dnum">15</span></div><div class="cell"><span class="dnum">16</span></div><div class="cell"><span class="dnum">17</span></div><div class="cell"><span class="dnum">18</span></div><div class="cell"><span class="dnum">19</span></div><div class="cell"><span class="dnum">20</span></div><div class="cell"><span class="dnum">21</span></div><div class="cell"><span class="dnum">22</span></div><div class="cell"><span class="dnum">23</span></div><div class="cell"><span class="dnum">24</span></div><div class="cell"><span class="dnum">25</span></div><div class="cell"><span class="dnum">26</span></div><div class="cell"><span class="dnum">27</span></div><div class="cell"><span class="dnum">28</span></div><div class="cell"><span class="dnum">29</span></div><div class="cell"><span class="dnum">30</span></div><div class="cell"><span class="dnum">31</span></div></div></div></div>
-    <div class="legend"><span class="lgi"><span class="sw" style="background:#E8A33D"></span>Naples</span><span class="lgi"><span class="sw" style="background:#7C86B8"></span>Travel</span><span class="lgi"><span class="sw" style="background:#1C7293"></span>Istanbul</span><span class="lgi"><span class="sw" style="background:#E0552B"></span>İzmir</span><span class="lgi"><span class="sw" style="background:#2980B9"></span>Greek Islands</span><span class="lgi"><span class="sw" style="background:#E67E22"></span>Crete 🏍</span><span class="lgi"><span class="sw" style="background:#8E44AD"></span>Ithaca</span><span class="lgi"><span class="sw" style="background:#C0392B"></span>España 🏍</span><span class="lgi"><span class="sw" style="background:#27AE60"></span>San Sebastián</span><span class="lgi"><span class="sw" style="background:#E8A33D"></span>Nürnberg</span></div>
-  </section>
-
-  <section class="card">
-    <h2>Who's where — sync matrix  <a href="map.html" style="font-size:14px;font-weight:600;color:var(--coral);text-decoration:none;">🗺 View on map →</a></h2>
-    <p class="sub">6-hour resolution · stacked by week · Jun 19 – Jul 14, 2026</p>
-    <div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding-bottom:4px;margin-bottom:6px;border-bottom:1px solid #e8ecf5">Week 1 · Jun 19–25</div><div class="gscroll"><div style="min-width:520px"><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:end;margin-bottom:2px"><div style="background:var(--navy);color:#fff;font-size:9px;text-align:center;padding:5px 2px;border-radius:4px;font-weight:700">Name</div><div style="display:grid;grid-template-columns:repeat(28,1fr);grid-template-rows:auto auto;gap:1px"><div style="grid-row:1;grid-column:1/5;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Fri<br>19</div><div style="grid-row:1;grid-column:5/9;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sat<br>20</div><div style="grid-row:1;grid-column:9/13;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sun<br>21</div><div style="grid-row:1;grid-column:13/17;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Mon<br>22</div><div style="grid-row:1;grid-column:17/21;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Tue<br>23</div><div style="grid-row:1;grid-column:21/25;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Wed<br>24</div><div style="grid-row:1;grid-column:25/29;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Thu<br>25</div><div style="grid-row:2;grid-column:1;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:2;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:3;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:4;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:5;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:6;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:7;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:8;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:9;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:10;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:11;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:12;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:13;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:14;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:15;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:16;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:17;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:18;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:19;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:20;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:21;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:22;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:23;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:24;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:25;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:26;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:27;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:28;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Peter</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/16;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">Naples</div><div class="gbar" style="grid-column:16/17;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈</div><div class="gbar" style="grid-column:17/29;background:#1C7293;height:22px;margin:3px 0;font-size:9px">Istanbul</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Matt</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/17;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">Naples</div><div class="gbar" style="grid-column:17/21;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ Flight</div><div class="gbar" style="grid-column:21/29;background:#1C7293;height:22px;margin:3px 0;font-size:9px">Istanbul</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Sam</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/17;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">Naples</div><div class="gbar" style="grid-column:17/21;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ Flight</div><div class="gbar" style="grid-column:21/29;background:#1C7293;height:22px;margin:3px 0;font-size:9px">Istanbul</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Grant</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/17;background:#1A7A4A;height:22px;margin:3px 0;font-size:9px">🇵🇹 Portugal</div><div class="gbar" style="grid-column:17/29;background:#9E9E9E;height:22px;margin:3px 0;font-size:9px">Work</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Brandel</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/17;background:#1A7A4A;height:22px;margin:3px 0;font-size:9px">🇵🇹 Portugal</div><div class="gbar" style="grid-column:17/29;background:#9E9E9E;height:22px;margin:3px 0;font-size:9px">Work</div></div></div></div></div></div><div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding-bottom:4px;margin-bottom:6px;border-bottom:1px solid #e8ecf5">Week 2 · Jun 26–Jul 2</div><div class="gscroll"><div style="min-width:520px"><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:end;margin-bottom:2px"><div style="background:var(--navy);color:#fff;font-size:9px;text-align:center;padding:5px 2px;border-radius:4px;font-weight:700">Name</div><div style="display:grid;grid-template-columns:repeat(28,1fr);grid-template-rows:auto auto;gap:1px"><div style="grid-row:1;grid-column:1/5;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Fri<br>26</div><div style="grid-row:1;grid-column:5/9;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sat<br>27</div><div style="grid-row:1;grid-column:9/13;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sun<br>28</div><div style="grid-row:1;grid-column:13/17;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Mon<br>29</div><div style="grid-row:1;grid-column:17/21;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Tue<br>30</div><div style="grid-row:1;grid-column:21/25;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Wed<br>1</div><div style="grid-row:1;grid-column:25/29;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Thu<br>2</div><div style="grid-row:2;grid-column:1;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:2;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:3;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:4;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:5;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:6;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:7;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:8;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:9;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:10;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:11;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:12;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:13;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:14;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:15;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:16;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:17;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:18;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:19;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:20;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:21;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:22;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:23;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:24;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:25;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:26;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:27;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:28;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Peter</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/7;background:#E0552B;height:22px;margin:3px 0;font-size:9px">İzmir</div><div class="gbar" style="grid-column:7/21;background:#2980B9;height:22px;margin:3px 0;font-size:9px">🏝 Islands</div><div class="gbar" style="grid-column:21/29;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Matt</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/7;background:#E0552B;height:22px;margin:3px 0;font-size:9px">İzmir</div><div class="gbar" style="grid-column:7/21;background:#2980B9;height:22px;margin:3px 0;font-size:9px">🏝 Islands</div><div class="gbar" style="grid-column:21/29;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Sam</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/7;background:#E0552B;height:22px;margin:3px 0;font-size:9px">İzmir</div><div class="gbar" style="grid-column:7/21;background:#2980B9;height:22px;margin:3px 0;font-size:9px">🏝 Islands</div><div class="gbar" style="grid-column:21/29;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Grant</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/6;background:#9E9E9E;height:22px;margin:3px 0;font-size:9px">Work</div><div class="gbar" style="grid-column:6/7;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ → İzmir</div><div class="gbar" style="grid-column:7/21;background:#2980B9;height:22px;margin:3px 0;font-size:9px">🏝 Islands</div><div class="gbar" style="grid-column:21/29;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Brandel</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/6;background:#9E9E9E;height:22px;margin:3px 0;font-size:9px">Work</div><div class="gbar" style="grid-column:6/7;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ → İzmir</div><div class="gbar" style="grid-column:7/21;background:#2980B9;height:22px;margin:3px 0;font-size:9px">🏝 Islands</div><div class="gbar" style="grid-column:21/29;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div></div></div></div></div></div><div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding-bottom:4px;margin-bottom:6px;border-bottom:1px solid #e8ecf5">Week 3 · Jul 3–9</div><div class="gscroll"><div style="min-width:520px"><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:end;margin-bottom:2px"><div style="background:var(--navy);color:#fff;font-size:9px;text-align:center;padding:5px 2px;border-radius:4px;font-weight:700">Name</div><div style="display:grid;grid-template-columns:repeat(28,1fr);grid-template-rows:auto auto;gap:1px"><div style="grid-row:1;grid-column:1/5;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Fri<br>3</div><div style="grid-row:1;grid-column:5/9;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sat<br>4</div><div style="grid-row:1;grid-column:9/13;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sun<br>5</div><div style="grid-row:1;grid-column:13/17;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Mon<br>6</div><div style="grid-row:1;grid-column:17/21;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Tue<br>7</div><div style="grid-row:1;grid-column:21/25;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Wed<br>8</div><div style="grid-row:1;grid-column:25/29;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Thu<br>9</div><div style="grid-row:2;grid-column:1;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:2;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:3;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:4;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:5;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:6;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:7;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:8;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:9;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:10;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:11;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:12;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:13;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:14;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:15;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:16;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:17;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:18;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:19;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:20;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:21;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:22;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:23;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:24;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:25;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:26;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:27;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:28;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Peter</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/9;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div><div class="gbar" style="grid-column:9/15;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">⛴ To Ithaca</div><div class="gbar" style="grid-column:15/16;background:#8E44AD;height:22px;margin:3px 0;font-size:9px">⚓ Ithaca</div><div class="gbar" style="grid-column:16/19;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ fly out</div><div class="gbar" style="grid-column:19/29;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Matt</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/9;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div><div class="gbar" style="grid-column:9/15;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">⛴ To Ithaca</div><div class="gbar" style="grid-column:15/16;background:#8E44AD;height:22px;margin:3px 0;font-size:9px">⚓ Ithaca</div><div class="gbar" style="grid-column:16/19;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ fly out</div><div class="gbar" style="grid-column:19/29;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Sam</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/9;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div><div class="gbar" style="grid-column:9/15;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">⛴ To Ithaca</div><div class="gbar" style="grid-column:15/16;background:#8E44AD;height:22px;margin:3px 0;font-size:9px">⚓ Ithaca</div><div class="gbar" style="grid-column:16/19;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ fly out</div><div class="gbar" style="grid-column:19/20;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ home</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Grant</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/9;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div><div class="gbar" style="grid-column:9/15;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">⛴ To Ithaca</div><div class="gbar" style="grid-column:15/16;background:#8E44AD;height:22px;margin:3px 0;font-size:9px">⚓ Ithaca</div><div class="gbar" style="grid-column:16/19;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ fly out</div><div class="gbar" style="grid-column:19/29;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Brandel</div><div style="display:grid;grid-template-columns:repeat(28,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/9;background:#E67E22;height:22px;margin:3px 0;font-size:9px">🏍 Crete</div><div class="gbar" style="grid-column:9/15;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">⛴ To Ithaca</div><div class="gbar" style="grid-column:15/16;background:#8E44AD;height:22px;margin:3px 0;font-size:9px">⚓ Ithaca</div><div class="gbar" style="grid-column:16/19;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ fly out</div><div class="gbar" style="grid-column:19/29;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div></div></div></div></div></div><div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding-bottom:4px;margin-bottom:6px;border-bottom:1px solid #e8ecf5">Week 4 · Jul 10–14</div><div class="gscroll"><div style="min-width:520px"><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:end;margin-bottom:2px"><div style="background:var(--navy);color:#fff;font-size:9px;text-align:center;padding:5px 2px;border-radius:4px;font-weight:700">Name</div><div style="display:grid;grid-template-columns:repeat(20,1fr);grid-template-rows:auto auto;gap:1px"><div style="grid-row:1;grid-column:1/5;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Fri<br>10</div><div style="grid-row:1;grid-column:5/9;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sat<br>11</div><div style="grid-row:1;grid-column:9/13;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Sun<br>12</div><div style="grid-row:1;grid-column:13/17;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Mon<br>13</div><div style="grid-row:1;grid-column:17/21;background:var(--navy);color:#fff;text-align:center;font-size:8px;font-weight:700;padding:2px 0;border-radius:3px 3px 0 0;line-height:1.2">Tue<br>14</div><div style="grid-row:2;grid-column:1;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:2;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:3;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:4;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:5;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:6;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:7;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:8;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:9;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:10;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:11;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:12;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:13;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:14;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:15;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:16;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div><div style="grid-row:2;grid-column:17;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12a</div><div style="grid-row:2;grid-column:18;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6a</div><div style="grid-row:2;grid-column:19;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">12p</div><div style="grid-row:2;grid-column:20;background:#dce3f2;color:#556;text-align:center;font-size:6px;padding:1px 0">6p</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Peter</div><div style="display:grid;grid-template-columns:repeat(20,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/5;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div><div class="gbar" style="grid-column:5/9;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🐂 Pamplona</div><div class="gbar" style="grid-column:9/13;background:#27AE60;height:22px;margin:3px 0;font-size:9px">🍴 San Sebas</div><div class="gbar" style="grid-column:13/16;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ Nürnberg</div><div class="gbar" style="grid-column:16/21;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">🍺 Nürnberg</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Matt</div><div style="display:grid;grid-template-columns:repeat(20,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/5;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div><div class="gbar" style="grid-column:5/9;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🐂 Pamplona</div><div class="gbar" style="grid-column:9/13;background:#27AE60;height:22px;margin:3px 0;font-size:9px">🍴 San Sebas</div><div class="gbar" style="grid-column:13/16;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ Nürnberg</div><div class="gbar" style="grid-column:16/21;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">🍺 Nürnberg</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Sam</div><div style="display:grid;grid-template-columns:repeat(20,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Grant</div><div style="display:grid;grid-template-columns:repeat(20,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/5;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div><div class="gbar" style="grid-column:5/9;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🐂 Pamplona</div><div class="gbar" style="grid-column:9/13;background:#27AE60;height:22px;margin:3px 0;font-size:9px">🍴 San Sebas</div><div class="gbar" style="grid-column:13/16;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ Nürnberg</div><div class="gbar" style="grid-column:16/21;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">🍺 Nürnberg</div></div></div><div style="display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:center;margin-bottom:2px"><div style="font-size:12px;font-weight:700;color:var(--navy);text-align:right;padding-right:4px">Brandel</div><div style="display:grid;grid-template-columns:repeat(20,1fr);gap:1px;background:#f0f3fa;border-radius:4px;padding:3px 2px"><div class="gbar" style="grid-column:1/5;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🏍 España</div><div class="gbar" style="grid-column:5/9;background:#C0392B;height:22px;margin:3px 0;font-size:9px">🐂 Pamplona</div><div class="gbar" style="grid-column:9/13;background:#27AE60;height:22px;margin:3px 0;font-size:9px">🍴 San Sebas</div><div class="gbar" style="grid-column:13/16;background:#7C86B8;height:22px;margin:3px 0;font-size:9px">✈ Nürnberg</div><div class="gbar" style="grid-column:16/21;background:#E8A33D;height:22px;margin:3px 0;font-size:9px">🍺 Nürnberg</div></div></div></div></div></div>
-  </section>
-
-
-
-  <section class="card crewrow">
-    <h2>The Crew</h2>
-    <p class="sub">Who's on board.</p>
-    <div><span class="crew">Peter</span><span class="crew">Matt</span><span class="crew">Sam</span><span class="crew">Grant</span><span class="crew">Brandel</span></div>
-  </section>
-
+<!-- ═══ ITINERARY ═══════════════════════════════════════════ -->
+<div class="meander"></div>
+<div class="sec-head">
+  <h2>Itinerary</h2>
+  <span class="sec-sub">Six legs · June 19 to July 14</span>
+  <a href="map.html">View on Map →</a>
 </div>
-<footer>Trip hub · generated for Peter · Summer 2026</footer>
-</body></html>
+<div class="content-band">
+  <div id="legs-container"></div>
+</div>
+
+<!-- ═══ CALENDAR ════════════════════════════════════════════ -->
+<div class="meander"></div>
+<div class="sec-head">
+  <h2>Calendar</h2>
+  <span class="sec-sub">June & July 2026 — colour-coded by leg</span>
+</div>
+<div class="content-band">
+  <div class="wrap">
+    <div class="cals">
+      <div class="month">
+        <div class="month-title">June</div>
+        <div class="cal-grid" id="jun-cal"></div>
+      </div>
+      <div class="month">
+        <div class="month-title">July</div>
+        <div class="cal-grid" id="jul-cal"></div>
+      </div>
+    </div>
+    <div class="legend" id="cal-legend"></div>
+  </div>
+</div>
+
+<!-- ═══ VOYAGE MATRIX ════════════════════════════════════════ -->
+<div class="meander"></div>
+<div class="sec-head">
+  <h2>The Voyage</h2>
+  <span class="sec-sub">Who's where · daily</span>
+  <a href="map.html">View on Map →</a>
+</div>
+<div class="content-band">
+  <div class="wrap">
+    <div id="matrix"></div>
+  </div>
+</div>
+
+<!-- ═══ CREW ═════════════════════════════════════════════════ -->
+<div class="meander"></div>
+<div class="sec-head">
+  <h2>The Crew</h2>
+  <span class="sec-sub">Five aboard</span>
+</div>
+<div class="content-band">
+  <div class="wrap" style="padding-top:0;padding-bottom:0;">
+    <div class="crew-grid" id="crew-grid"></div>
+  </div>
+</div>
+
+<div class="meander"></div>
+<footer>
+  <p>Trip Hub · Summer 2026 · Peter · Matt · Sam · Grant · Brandel</p>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────────────────────
+const LEG_COLORS = {
+  portugal: '#1A7A4A',
+  naples:   '#D4A030',
+  travel:   '#8291AE',
+  istanbul: '#1C7293',
+  izmir:    '#C04020',
+  work:     '#9E9E9E',
+  islands:  '#2980B9',
+  crete:    '#E67E22',
+  ithaca:   '#8E44AD',
+  espana:   '#C0392B',
+  nurnberg: '#D4A030',
+};
+const LEG_LABELS = {
+  portugal:'Portugal', naples:'Naples', travel:'Travel',
+  istanbul:'Istanbul', izmir:'İzmir', work:'Work',
+  islands:'Greek Islands', crete:'Crete 🏍', ithaca:'Ithaca',
+  espana:'España 🏍', nurnberg:'Nürnberg',
+};
+
+const LEGS_DATA = [
+  { id:'portugal', phase:'🇵🇹 Portugal',    color:'#1A7A4A', dates:'Jun 19–22',
+    who:'Grant · Brandel', stay:'Lisbon area',
+    stops:'Lisbon, Portugal' },
+  { id:'naples',   phase:'Naples',          color:'#D4A030', dates:'Jun 19–22',
+    who:'Peter · Matt · Sam', stay:'Naples, Italy',
+    stops:'Naples, Italy' },
+  { id:'istanbul', phase:'Istanbul',        color:'#1C7293', dates:'Jun 23–25',
+    who:'Peter · Matt · Sam', stay:'Istanbul, Türkiye',
+    stops:'Istanbul, Türkiye' },
+  { id:'izmir',    phase:'İzmir',           color:'#C04020', dates:'Jun 26–27',
+    who:'Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)', stay:'İzmir, Türkiye',
+    stops:'İzmir, Türkiye' },
+  { id:'islands',  phase:'🏝 Greek Islands', color:'#2980B9', dates:'Jun 28–Jul 1',
+    who:'All five', stay:'Island hopping — Çeşme ferry across',
+    stops:'Çeşme · Chios · Samos · Mykonos · Santorini' },
+  { id:'crete',    phase:'🏍 Crete',        color:'#E67E22', dates:'Jul 1–4',
+    who:'All five', stay:'Crete — motorcycle',
+    stops:'Heraklion · Chania' },
+  { id:'ithaca',   phase:'⚓ Ithaca',       color:'#8E44AD', dates:'Jul 5–7',
+    who:'All five', stay:'Ithaca — Agent Ithaca',
+    stops:'Ithaca, Greece' },
+  { id:'espana',   phase:'🏍 España',       color:'#C0392B', dates:'Jul 7–12',
+    who:'Peter · Matt · Grant · Brandel', stay:'Bilbao → Picos → Pamplona → Donostia → Bilbao',
+    stops:'Bilbao · Picos de Europa · Pamplona · San Sebastián' },
+  { id:'nurnberg', phase:'🍺 Nürnberg',     color:'#D4A030', dates:'Jul 13–14',
+    who:'Peter · Matt · Grant · Brandel', stay:'Nürnberg — recovery day',
+    stops:'Nürnberg, Germany' },
+];
+
+const CREW = ['Peter','Matt','Sam','Grant','Brandel'];
+
+// ─────────────────────────────────────────────────────────────
+//  SCHEDULE (m=5→June, m=6→July)
+// ─────────────────────────────────────────────────────────────
+const SCHEDULE = {};
+function fill(name, m1, d1, m2, d2, legId) {
+  if (!SCHEDULE[name]) SCHEDULE[name] = {};
+  let m = m1, d = d1;
+  while (true) {
+    SCHEDULE[name][m + '-' + d] = legId;
+    if (m === m2 && d === d2) break;
+    d++;
+    if (m === 5 && d > 30) { m = 6; d = 1; }
+    if (m === 6 && d > 14) break;
+  }
+}
+// Peter — flies Naples→Istanbul TK1880 Jun 22 eve, arrives Jun 23 00:05
+fill('Peter',   5,19, 5,22, 'naples');
+fill('Peter',   5,23, 5,25, 'istanbul');
+fill('Peter',   5,26, 5,27, 'izmir');
+fill('Peter',   5,28, 6, 1, 'islands');
+fill('Peter',   6, 1, 6, 4, 'crete');
+fill('Peter',   6, 5, 6, 7, 'ithaca');
+fill('Peter',   6, 7, 6,12, 'espana');
+fill('Peter',   6,13, 6,14, 'nurnberg');
+
+// Matt — travels Jun 23, Istanbul Jun 24+
+fill('Matt',    5,19, 5,22, 'naples');
+fill('Matt',    5,23, 5,23, 'travel');
+fill('Matt',    5,24, 5,25, 'istanbul');
+fill('Matt',    5,26, 5,27, 'izmir');
+fill('Matt',    5,28, 6, 1, 'islands');
+fill('Matt',    6, 1, 6, 4, 'crete');
+fill('Matt',    6, 5, 6, 7, 'ithaca');
+fill('Matt',    6, 7, 6,12, 'espana');
+fill('Matt',    6,13, 6,14, 'nurnberg');
+
+// Sam — flies home Jul 7 after Ithaca
+fill('Sam',     5,19, 5,22, 'naples');
+fill('Sam',     5,23, 5,23, 'travel');
+fill('Sam',     5,24, 5,25, 'istanbul');
+fill('Sam',     5,26, 5,27, 'izmir');
+fill('Sam',     5,28, 6, 1, 'islands');
+fill('Sam',     6, 1, 6, 4, 'crete');
+fill('Sam',     6, 5, 6, 7, 'ithaca');
+
+// Grant — Portugal Jun 19-22, work Jun 23-26, fly to İzmir (ADB) Jun 27
+fill('Grant',   5,19, 5,22, 'portugal');
+fill('Grant',   5,23, 5,26, 'work');
+fill('Grant',   5,27, 5,27, 'izmir');
+fill('Grant',   5,28, 6, 1, 'islands');
+fill('Grant',   6, 1, 6, 4, 'crete');
+fill('Grant',   6, 5, 6, 7, 'ithaca');
+fill('Grant',   6, 7, 6,12, 'espana');
+fill('Grant',   6,13, 6,14, 'nurnberg');
+
+// Brandel — same as Grant
+fill('Brandel', 5,19, 5,22, 'portugal');
+fill('Brandel', 5,23, 5,26, 'work');
+fill('Brandel', 5,27, 5,27, 'izmir');
+fill('Brandel', 5,28, 6, 1, 'islands');
+fill('Brandel', 6, 1, 6, 4, 'crete');
+fill('Brandel', 6, 5, 6, 7, 'ithaca');
+fill('Brandel', 6, 7, 6,12, 'espana');
+fill('Brandel', 6,13, 6,14, 'nurnberg');
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER: LEGS
+// ─────────────────────────────────────────────────────────────
+(function() {
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));border-left:1px solid #DDD0A0;border-top:1px solid #DDD0A0;';
+  LEGS_DATA.forEach(leg => {
+    const c = document.createElement('div');
+    c.style.cssText = 'background:#EFE3C0;border-right:1px solid #DDD0A0;border-bottom:1px solid #DDD0A0;padding:18px 20px 18px 24px;position:relative;transition:background .15s;';
+    c.onmouseenter = () => c.style.background = '#E5D5AA';
+    c.onmouseleave = () => c.style.background = '#EFE3C0';
+    c.innerHTML = `
+      <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:${leg.color}"></div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px;">
+        <span style="font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.07em;color:#1A1209;flex:1;">${leg.phase}</span>
+        <span style="font-family:'EB Garamond',serif;font-size:13px;color:#8B1A1A;font-style:italic;white-space:nowrap;">${leg.dates}</span>
+      </div>
+      <div style="font-family:'EB Garamond',serif;font-size:13.5px;color:#7A6840;font-style:italic;margin-bottom:3px;">${leg.who}</div>
+      <div style="font-family:'EB Garamond',serif;font-size:13px;color:#555;margin-bottom:2px;">&#9665; ${leg.stay}</div>
+      <div style="font-family:'EB Garamond',serif;font-size:12px;color:#888;font-style:italic;">${leg.stops}</div>
+    `;
+    grid.appendChild(c);
+  });
+  document.getElementById('legs-container').appendChild(grid);
+})();
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER: CALENDAR
+// ─────────────────────────────────────────────────────────────
+const CAL_DATA = {
+  // June
+  '5-19':{bg:'#F2E4CA',bl:'#D4A030',chip:'Naples',         cc:'#D4A030'},
+  '5-20':{bg:'#F2E4CA',bl:'#D4A030'},
+  '5-21':{bg:'#F2E4CA',bl:'#D4A030'},
+  '5-22':{bg:'#F2E4CA',bl:'#D4A030',chip:'✈ TK1880 20:45', cc:'#8291AE'},
+  '5-23':{bg:'#D4E8F0',bl:'#1C7293',chip:'✈ → Istanbul',  cc:'#1C7293'},
+  '5-24':{bg:'#D4E8F0',bl:'#1C7293',chip:'Istanbul',       cc:'#1C7293'},
+  '5-25':{bg:'#D4E8F0',bl:'#1C7293'},
+  '5-26':{bg:'#F2DDD5',bl:'#C04020',chip:'İzmir',          cc:'#C04020'},
+  '5-27':{bg:'#F2DDD5',bl:'#C04020',chip:'⛴ set off',     cc:'#C04020'},
+  '5-28':{bg:'#D5E8F4',bl:'#2980B9',chip:'🏝 Islands',    cc:'#2980B9'},
+  '5-29':{bg:'#D5E8F4',bl:'#2980B9'},
+  '5-30':{bg:'#D5E8F4',bl:'#2980B9'},
+  // July
+  '6-1': {bg:'#FDE8D4',bl:'#E67E22',chip:'🏍 Crete',      cc:'#E67E22'},
+  '6-2': {bg:'#FDE8D4',bl:'#E67E22'},
+  '6-3': {bg:'#FDE8D4',bl:'#E67E22'},
+  '6-4': {bg:'#FDE8D4',bl:'#E67E22'},
+  '6-5': {bg:'#E6E0F0',bl:'#8E44AD',chip:'⛴ To Ithaca',  cc:'#8291AE'},
+  '6-6': {bg:'#E6E0F0',bl:'#8E44AD',chip:'⚓ Ithaca',     cc:'#8E44AD'},
+  '6-7': {bg:'#E6E0F0',bl:'#8291AE',chip:'✈ fly out',     cc:'#8291AE'},
+  '6-8': {bg:'#F8DBD8',bl:'#C0392B',chip:'🏍 España',     cc:'#C0392B'},
+  '6-9': {bg:'#F8DBD8',bl:'#C0392B'},
+  '6-10':{bg:'#F8DBD8',bl:'#C0392B'},
+  '6-11':{bg:'#F8DBD8',bl:'#C0392B',chip:'🐂 Pamplona',   cc:'#C0392B'},
+  '6-12':{bg:'#F8DBD8',bl:'#C0392B',chip:'🍴 Donostia',   cc:'#C0392B'},
+  '6-13':{bg:'#E6E9F2',bl:'#8291AE',chip:'✈ Nürnberg',   cc:'#8291AE'},
+  '6-14':{bg:'#F2E4CA',bl:'#D4A030',chip:'🍺 Nürnberg',   cc:'#D4A030'},
+};
+
+function renderCalendar(containerId, month, numDays, startDow) {
+  const grid = document.getElementById(containerId);
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'dow';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+  for (let i = 0; i < startDow; i++) {
+    const el = document.createElement('div');
+    el.className = 'cell blank';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= numDays; d++) {
+    const key = month + '-' + d;
+    const data = CAL_DATA[key];
+    const el = document.createElement('div');
+    el.className = 'cell';
+    if (data) {
+      el.style.background = data.bg;
+      el.style.borderLeft = '3px solid ' + data.bl;
+    }
+    let html = '<span class="dnum">' + d + '</span>';
+    if (data && data.chip) {
+      html += '<span class="chip" style="background:' + data.cc + '">' + data.chip + '</span>';
+    }
+    el.innerHTML = html;
+    grid.appendChild(el);
+  }
+}
+renderCalendar('jun-cal', 5, 30, 1); // Jun 2026 starts Monday
+renderCalendar('jul-cal', 6, 31, 3); // Jul 2026 starts Wednesday
+
+const LEGEND_ITEMS = [
+  {label:'Portugal 🇵🇹',     color:'#1A7A4A'},
+  {label:'Naples',           color:'#D4A030'},
+  {label:'Travel',           color:'#8291AE'},
+  {label:'Istanbul',         color:'#1C7293'},
+  {label:'İzmir',            color:'#C04020'},
+  {label:'Greek Islands 🏝', color:'#2980B9'},
+  {label:'Crete 🏍',         color:'#E67E22'},
+  {label:'Ithaca ⚓',        color:'#8E44AD'},
+  {label:'España 🏍',        color:'#C0392B'},
+  {label:'Nürnberg 🍺',      color:'#D4A030'},
+];
+const legendEl = document.getElementById('cal-legend');
+LEGEND_ITEMS.forEach(item => {
+  const el = document.createElement('span');
+  el.className = 'lgi';
+  el.innerHTML = '<span class="sw" style="background:' + item.color + '"></span>' + item.label;
+  legendEl.appendChild(el);
+});
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER: MATRIX
+// ─────────────────────────────────────────────────────────────
+const ALL_DATES = [];
+for (let d = 19; d <= 30; d++) ALL_DATES.push({m:5, d});
+for (let d = 1;  d <= 14; d++) ALL_DATES.push({m:6, d});
+
+const WEEKS = [
+  {label:'Week 1 · Jun 19–25',  dates: ALL_DATES.slice(0,7)},
+  {label:'Week 2 · Jun 26 – Jul 2', dates: ALL_DATES.slice(7,14)},
+  {label:'Week 3 · Jul 3–9',    dates: ALL_DATES.slice(14,21)},
+  {label:'Week 4 · Jul 10–14',  dates: ALL_DATES.slice(21)},
+];
+
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function getDow(m, d) {
+  return m === 5 ? d % 7 : (30 + d) % 7;
+}
+
+const matrixEl = document.getElementById('matrix');
+const cols = n => '80px repeat(' + n + ', 1fr)';
+
+WEEKS.forEach(week => {
+  const wdiv = document.createElement('div');
+  wdiv.className = 'matrix-week';
+
+  const lbl = document.createElement('div');
+  lbl.className = 'matrix-week-lbl';
+  lbl.textContent = week.label;
+  wdiv.appendChild(lbl);
+
+  const scroll = document.createElement('div');
+  scroll.className = 'matrix-scroll';
+  const inner = document.createElement('div');
+  inner.className = 'matrix-inner';
+
+  // Header row
+  const hrow = document.createElement('div');
+  hrow.className = 'm-row';
+  hrow.style.gridTemplateColumns = cols(week.dates.length);
+  const empty = document.createElement('div');
+  empty.style.background = 'var(--ink)';
+  hrow.appendChild(empty);
+  week.dates.forEach(date => {
+    const el = document.createElement('div');
+    el.className = 'm-day-hdr';
+    el.innerHTML = DAY_NAMES[getDow(date.m, date.d)] + '<br>' + date.d;
+    hrow.appendChild(el);
+  });
+  inner.appendChild(hrow);
+
+  CREW.forEach(person => {
+    const row = document.createElement('div');
+    row.className = 'm-row';
+    row.style.gridTemplateColumns = cols(week.dates.length);
+
+    const nEl = document.createElement('div');
+    nEl.className = 'm-name';
+    nEl.textContent = person;
+    row.appendChild(nEl);
+
+    week.dates.forEach(date => {
+      const key = date.m + '-' + date.d;
+      const legId = (SCHEDULE[person] || {})[key];
+      const cell = document.createElement('div');
+      cell.className = 'm-cell';
+      cell.style.background = legId && LEG_COLORS[legId] ? LEG_COLORS[legId] : '#DDD0A0';
+      if (legId) cell.title = person + ': ' + LEG_LABELS[legId];
+      row.appendChild(cell);
+    });
+
+    inner.appendChild(row);
+  });
+
+  scroll.appendChild(inner);
+  wdiv.appendChild(scroll);
+  matrixEl.appendChild(wdiv);
+});
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER: CREW
+// ─────────────────────────────────────────────────────────────
+const CREW_INFO = [
+  {name:'Peter',   sub:'Organiser'},
+  {name:'Matt',    sub:'Crew'},
+  {name:'Sam',     sub:'Crew'},
+  {name:'Grant',   sub:'Crew'},
+  {name:'Brandel', sub:'Crew'},
+];
+const crewGrid = document.getElementById('crew-grid');
+CREW_INFO.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'crew-card';
+  card.innerHTML = '<div class="crew-name">' + c.name + '</div>';
+  crewGrid.appendChild(card);
+});
+</script>
+</body>
+</html>
