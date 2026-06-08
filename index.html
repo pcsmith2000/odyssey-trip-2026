@@ -604,10 +604,9 @@ fill('Peter',   6, 5, 6, 7, 'ithaca');
 fill('Peter',   6, 7, 6,12, 'espana');
 fill('Peter',   6,13, 6,14, 'nurnberg');
 
-// Matt — travels Jun 23, Istanbul Jun 24+
+// Matt — TK1880 Jun 22 eve, Istanbul from Jun 23
 fill('Matt',    5,19, 5,22, 'naples');
-fill('Matt',    5,23, 5,23, 'travel');
-fill('Matt',    5,24, 5,25, 'istanbul');
+fill('Matt',    5,23, 5,25, 'istanbul');
 fill('Matt',    5,26, 5,27, 'izmir');
 fill('Matt',    5,28, 6, 1, 'islands');
 fill('Matt',    6, 1, 6, 4, 'crete');
@@ -615,10 +614,9 @@ fill('Matt',    6, 5, 6, 7, 'ithaca');
 fill('Matt',    6, 7, 6,12, 'espana');
 fill('Matt',    6,13, 6,14, 'nurnberg');
 
-// Sam — flies home Jul 7 after Ithaca
+// Sam — TK1880 Jun 22 eve, Istanbul from Jun 23; flies home Jul 7 after Ithaca
 fill('Sam',     5,19, 5,22, 'naples');
-fill('Sam',     5,23, 5,23, 'travel');
-fill('Sam',     5,24, 5,25, 'istanbul');
+fill('Sam',     5,23, 5,25, 'istanbul');
 fill('Sam',     5,26, 5,27, 'izmir');
 fill('Sam',     5,28, 6, 1, 'islands');
 fill('Sam',     6, 1, 6, 4, 'crete');
@@ -676,7 +674,7 @@ const FLIGHT_DETAILS = {
     dep: 'Jun 22, 2026 · 20:45',
     arr: 'Jun 23, 2026 · 00:05',
     res: 'U3VWXQ', seat: null, cabin: 'Economy — EcoFly',
-    notes: 'Cabin baggage only · 1 × 8 kg',
+    notes: 'Peter · Matt · Sam · Cabin baggage only · 1 × 8 kg',
     confirmed: true,
   },
 };
@@ -692,13 +690,23 @@ const SLOT_OVERRIDES = [
   {person:'Peter', m:5, d:20, s0:0, s1:2, legId:'travel',   label:'✈ UA966',     flightKey:'UA966'},
   {person:'Peter', m:5, d:20, s0:2, s1:4, legId:'naples',   label:'Naples'},
 
-  // Peter — TK1880 NAP→IST  res. U3VWXQ
+  // Peter, Matt, Sam — TK1880 NAP→IST  res. U3VWXQ
   //   departs Naples  Jun 22 20:45  → slot 3 (6pm-midnight)
   //   arrives Istanbul Jun 23 00:05 → slot 0 (12am-6am)
-  {person:'Peter', m:5, d:22, s0:0, s1:3, legId:'naples',   label:'Naples'},
-  {person:'Peter', m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880',   flightKey:'TK1880'},
-  {person:'Peter', m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST', flightKey:'TK1880'},
-  {person:'Peter', m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
+  {person:'Peter',   m:5, d:22, s0:0, s1:3, legId:'naples',   label:'Naples'},
+  {person:'Peter',   m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880',   flightKey:'TK1880'},
+  {person:'Peter',   m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST', flightKey:'TK1880'},
+  {person:'Peter',   m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
+
+  {person:'Matt',    m:5, d:22, s0:0, s1:3, legId:'naples',   label:'Naples'},
+  {person:'Matt',    m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880',   flightKey:'TK1880'},
+  {person:'Matt',    m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST', flightKey:'TK1880'},
+  {person:'Matt',    m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
+
+  {person:'Sam',     m:5, d:22, s0:0, s1:3, legId:'naples',   label:'Naples'},
+  {person:'Sam',     m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880',   flightKey:'TK1880'},
+  {person:'Sam',     m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST', flightKey:'TK1880'},
+  {person:'Sam',     m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
 ];
 
 function getOverrides(person, m, d) {
