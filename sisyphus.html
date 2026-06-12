@@ -283,18 +283,20 @@ body {
   <div class="counter">
     <div class="counter-label">VC Capital Incinerated</div>
     <div class="counter-amount" id="amount"><span class="dollar">$</span>0<span class="cents">.00</span></div>
-    <div class="counter-sub">Venture capital set alight running Claude Sonnet 4.6 on an infinite loop — once a minute, forever.</div>
+    <div class="counter-sub">Maxing Claude Sonnet 4.6 on the $100/mo Max plan — pushing the boulder, forever.</div>
     <div class="counter-breakdown">
-      <span><b>$0.21</b>/run you pay</span>
+      <span><b>$100</b>/mo you pay</span>
       <span class="sep">·</span>
-      <span><b>$1.47</b>/run true cost</span>
+      <span><b>~1.3B</b> tokens</span>
       <span class="sep">·</span>
-      <span><b>86%</b> on the house</span>
+      <span><b>$5.6K</b> API value</span>
+      <span class="sep">·</span>
+      <span><b>$39K</b> true cost</span>
     </div>
-    <div class="counter-quip">≈ $6 of investor capital torched for every $1 of revenue.</div>
+    <div class="counter-quip">≈ $390 of real compute incinerated for every $1 you pay.</div>
     <div class="run-pill">
       <span class="run-dot" id="dot"></span>
-      <span id="runtxt">Awaiting next inference…</span>
+      <span id="runtxt">Sonnet pinned at the plan cap…</span>
     </div>
   </div>
 
@@ -350,32 +352,23 @@ body {
   wrap.innerHTML = html;
 })();
 
-/* ───────── The VC-Subsidy Burn Counter ─────────
-   What this meters: the venture capital incinerated to run one Claude
-   Sonnet 4.6 inference every 60 seconds, forever. Starts at $0 on load
-   and only climbs — like the boulder.
+/* ───────── The VC-Subsidy Burn Counter — $100/mo Max plan, Sonnet maxed ─────────
+   Conceit: you pay $100/month for Claude Max (5×) and pin Sonnet 4.6 at the
+   plan's ceiling. Meter starts at $0 on load and accrues the incinerated VC
+   subsidy in real time — like the boulder, it only ever climbs.
 
-   Per inference (a chunky agentic call): ~30k input + ~8k output tokens.
-   Sonnet 4.6 list price: $3 / 1M input, $15 / 1M output.
-     input : 30,000 × $3 /1M = $0.09
-     output:  8,000 × $15/1M = $0.12
-     ── list price you actually pay ........ $0.21 / run
-
-   The catch: frontier inference sells far below true cost. Training
-   amortisation + GPU capex + R&D + the next model run ~7× the sticker
-   price, and venture capital eats the gap:
-     all-in cost ... $0.21 × 7 = $1.47 / run
-     you pay ....................... $0.21 / run  (14%)
-     ── VC subsidy (incinerated) ... $1.26 / run  (86%)
-   ≈ $6 of investor capital torched per $1 of revenue. This counter
-   tracks the incinerated subsidy — the capital that doesn't come back.
+   Plan ceiling (Max 5×): ~140–280 Sonnet-hours/week; documented heavy users
+   extract up to ~$5,600/mo of API-equivalent value ≈ ~1.3B Sonnet tokens/mo
+   at list price ($3/1M in, $15/1M out, ~$4.20/1M blended).
+     you pay ........................ $100      / month
+     API list value extracted ....... $5,600    / month   (≈ 56× your $100)
+     true all-in cost (×7 over list)  $39,200   / month
+     ── VC subsidy (incinerated) .... $39,100   / month   (≈ $390 per $1 paid)
 */
-const EPOCH           = Date.now();                       // meter starts on page load
-const LIST_PER_RUN    = 0.21;                             // Sonnet 4.6 list price per run
-const BURN_MULT       = 7;                                // true all-in cost ÷ list price
-const SUBSIDY_PER_RUN = LIST_PER_RUN * (BURN_MULT - 1);   // $1.26 — the VC-funded gap
-const PER_MINUTE      = SUBSIDY_PER_RUN;                  // one run / minute
-const PER_MS          = PER_MINUTE / 60000;
+const EPOCH             = Date.now();                       // meter starts on page load
+const SUBSIDY_PER_MONTH = 39100;                            // true cost − what you pay
+const MS_PER_MONTH      = 30.44 * 24 * 60 * 60 * 1000;      // avg month in ms
+const PER_MS            = SUBSIDY_PER_MONTH / MS_PER_MONTH;  // ≈ $0.0149 / sec
 
 const amountEl = document.getElementById('amount');
 const dot      = document.getElementById('dot');
@@ -405,8 +398,8 @@ function tick(){
   if (minute !== lastRunMinute && secsIntoMin < 1.2) {
     lastRunMinute = minute;
     dot.classList.remove('fire'); void dot.offsetWidth; dot.classList.add('fire');
-    runtxt.textContent = 'Inference complete — invoice sent';
-    setTimeout(()=>{ if(runtxt) runtxt.textContent = 'Awaiting next inference…'; }, 4000);
+    runtxt.textContent = 'Another minute, another shove';
+    setTimeout(()=>{ if(runtxt) runtxt.textContent = 'Sonnet pinned at the plan cap…'; }, 4000);
   }
   requestAnimationFrame(tick);
 }
