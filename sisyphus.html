@@ -96,6 +96,27 @@ body {
   color: var(--parchment);
   opacity: 0.82;
 }
+.counter-breakdown {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(9px, 1.2vw, 13px);
+  letter-spacing: 0.06em;
+  color: var(--parchment);
+  opacity: 0.9;
+}
+.counter-breakdown b { color: var(--gold-lt); font-weight: 700; }
+.counter-breakdown .sep { opacity: 0.4; }
+.counter-quip {
+  margin-top: 7px;
+  font-style: italic;
+  font-size: clamp(10px, 1.4vw, 15px);
+  color: var(--gold-lt);
+  opacity: 0.78;
+}
 .run-pill {
   display: inline-flex;
   align-items: center;
@@ -262,7 +283,15 @@ body {
   <div class="counter">
     <div class="counter-label">VC Capital Incinerated</div>
     <div class="counter-amount" id="amount"><span class="dollar">$</span>0<span class="cents">.00</span></div>
-    <div class="counter-sub">Running Claude Sonnet on an infinite loop, once every minute. Forever.</div>
+    <div class="counter-sub">Venture capital set alight running Claude Sonnet 4.6 on an infinite loop — once a minute, forever.</div>
+    <div class="counter-breakdown">
+      <span><b>$0.21</b>/run you pay</span>
+      <span class="sep">·</span>
+      <span><b>$1.47</b>/run true cost</span>
+      <span class="sep">·</span>
+      <span><b>86%</b> on the house</span>
+    </div>
+    <div class="counter-quip">≈ $6 of investor capital torched for every $1 of revenue.</div>
     <div class="run-pill">
       <span class="run-dot" id="dot"></span>
       <span id="runtxt">Awaiting next inference…</span>
@@ -321,20 +350,32 @@ body {
   wrap.innerHTML = html;
 })();
 
-/* ───────── The Burn Counter ─────────
-   The conceit: one Claude Sonnet inference fires every 60s, forever.
-   We start the meter at $0 the moment you open the page and bill
-   continuously from there, so it only ever climbs — like the boulder.
+/* ───────── The VC-Subsidy Burn Counter ─────────
+   What this meters: the venture capital incinerated to run one Claude
+   Sonnet 4.6 inference every 60 seconds, forever. Starts at $0 on load
+   and only climbs — like the boulder.
 
-   Cost model (deliberately, comically generous):
-   ~per-minute Sonnet run, amortised + the cloud/infra/observability tax
-   a VC-funded startup inevitably stacks on top of a single API call.
+   Per inference (a chunky agentic call): ~30k input + ~8k output tokens.
+   Sonnet 4.6 list price: $3 / 1M input, $15 / 1M output.
+     input : 30,000 × $3 /1M = $0.09
+     output:  8,000 × $15/1M = $0.12
+     ── list price you actually pay ........ $0.21 / run
+
+   The catch: frontier inference sells far below true cost. Training
+   amortisation + GPU capex + R&D + the next model run ~7× the sticker
+   price, and venture capital eats the gap:
+     all-in cost ... $0.21 × 7 = $1.47 / run
+     you pay ....................... $0.21 / run  (14%)
+     ── VC subsidy (incinerated) ... $1.26 / run  (86%)
+   ≈ $6 of investor capital torched per $1 of revenue. This counter
+   tracks the incinerated subsidy — the capital that doesn't come back.
 */
-const EPOCH      = Date.now();  // the meter starts the moment this page loads
-const PER_RUN    = 0.23;        // notional $ per Sonnet inference
-const TAX_MULT   = 18.5;        // infra + headcount + "AI strategy" overhead multiplier
-const PER_MINUTE = PER_RUN * TAX_MULT;          // ≈ $4.26 / min
-const PER_MS     = PER_MINUTE / 60000;
+const EPOCH           = Date.now();                       // meter starts on page load
+const LIST_PER_RUN    = 0.21;                             // Sonnet 4.6 list price per run
+const BURN_MULT       = 7;                                // true all-in cost ÷ list price
+const SUBSIDY_PER_RUN = LIST_PER_RUN * (BURN_MULT - 1);   // $1.26 — the VC-funded gap
+const PER_MINUTE      = SUBSIDY_PER_RUN;                  // one run / minute
+const PER_MS          = PER_MINUTE / 60000;
 
 const amountEl = document.getElementById('amount');
 const dot      = document.getElementById('dot');
