@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Labour of Sisyphus — Burning VC Dollars</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:      #C8881C;
+  --gold-lt:   #E8B85C;
+  --crimson:   #8B1A1A;
+  --ink:       #0B0905;
+  --parchment: #EFE3C0;
+  --sky-top:   #1a1530;
+  --sky-mid:   #3a2a4a;
+  --sky-low:   #8b4a3a;
+  --hill:      #14110a;
+  --hill2:     #211a0e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  color: var(--parchment);
+  background: var(--ink);
+  overflow: hidden;
+  cursor: default;
+}
+
+/* ── FULLSCREEN STAGE ───────────────────────────────────── */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 78% 18%, rgba(232,184,92,0.22), transparent 55%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 48%, var(--sky-low) 86%, #b06a3a 100%);
+}
+
+/* drifting stars */
+.stars { position: absolute; inset: 0; opacity: 0.6; }
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #fff; border-radius: 50%;
+  animation: twinkle 3.5s ease-in-out infinite;
+}
+@keyframes twinkle { 0%,100%{opacity:.15;} 50%{opacity:.9;} }
+
+/* sun / "the eternal noon" */
+.sun {
+  position: absolute;
+  top: 11%; right: 13%;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #ffe6a8, #E8B85C 55%, #C8881C 100%);
+  box-shadow: 0 0 60px 24px rgba(232,184,92,0.35);
+}
+
+/* ── COUNTER (top) ──────────────────────────────────────── */
+.counter {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 30;
+  text-align: center;
+  padding: 22px 16px 18px;
+  background: linear-gradient(180deg, rgba(11,9,5,0.82) 0%, rgba(11,9,5,0.45) 70%, transparent 100%);
+  pointer-events: none;
+}
+.counter-label {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(9px, 1.3vw, 13px);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold-lt);
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+.counter-amount {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: clamp(34px, 8vw, 96px);
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(232,184,92,0.55), 0 2px 0 rgba(0,0,0,0.4);
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.counter-amount .cents { font-size: 0.5em; opacity: 0.75; vertical-align: 0.25em; margin-left: 2px; }
+.counter-amount .dollar { color: var(--gold-lt); margin-right: 0.04em; }
+.counter-sub {
+  margin-top: 10px;
+  font-style: italic;
+  font-size: clamp(11px, 1.6vw, 17px);
+  color: var(--parchment);
+  opacity: 0.82;
+}
+.run-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 11px;
+  padding: 5px 14px;
+  border: 1px solid rgba(232,184,92,0.5);
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(8px, 1.1vw, 11px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-lt);
+  background: rgba(0,0,0,0.25);
+}
+.run-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #57d98a;
+  box-shadow: 0 0 0 0 rgba(87,217,138,0.7);
+}
+.run-dot.fire {
+  animation: ping 0.9s ease-out;
+  background: #ffd35e;
+}
+@keyframes ping {
+  0%   { box-shadow: 0 0 0 0 rgba(255,211,94,0.8); transform: scale(1); }
+  100% { box-shadow: 0 0 0 16px rgba(255,211,94,0); transform: scale(1.4); }
+}
+
+/* ── HILL + SCENE ───────────────────────────────────────── */
+.hill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 100%;
+  z-index: 10;
+}
+.hill svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
+
+/* The mover travels along the incline. (0,0) = bottom-left of slope. */
+.mover {
+  position: absolute;
+  left: 0; bottom: 0;
+  z-index: 20;
+  /* translate handled by JS-driven CSS var animation */
+  animation: climb var(--cycle, 11s) cubic-bezier(.45,.05,.55,.95) infinite;
+  will-change: transform;
+}
+/*
+  The incline runs from bottom-left up to top-right.
+  We climb slowly (0 → 72%), teeter at the crest (72 → 76%),
+  then the boulder tumbles back down fast (76 → 86%),
+  and Sisyphus trudges back to the bottom (86 → 100%).
+*/
+@keyframes climb {
+  0%   { transform: translate(2vw,  -4vh); }
+  4%   { transform: translate(3vw,  -6vh); }
+  72%  { transform: translate(70vw, -74vh); }
+  76%  { transform: translate(73vw, -78vh); }   /* crest — so close */
+  77%  { transform: translate(70vw, -74vh); }   /* it slips */
+  86%  { transform: translate(4vw,  -7vh); }     /* boulder crashes down */
+  100% { transform: translate(2vw,  -4vh); }     /* and again */
+}
+
+/* boulder */
+.boulder {
+  position: absolute;
+  left: 26px; bottom: 30px;
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 30%, #8a8170, #5a5142 55%, #393326 100%);
+  box-shadow: inset -8px -10px 18px rgba(0,0,0,0.55), inset 6px 6px 12px rgba(255,255,255,0.12), 0 6px 14px rgba(0,0,0,0.5);
+  animation: spin var(--cycle, 11s) linear infinite;
+  will-change: transform;
+}
+.boulder::before, .boulder::after {
+  content: ""; position: absolute; border-radius: 50%;
+  background: rgba(0,0,0,0.22);
+}
+.boulder::before { width: 16px; height: 12px; top: 22px; left: 30px; }
+.boulder::after  { width: 10px; height: 9px;  top: 50px; left: 18px; box-shadow: 22px 6px 0 rgba(0,0,0,0.18); }
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  72%  { transform: rotate(720deg); }   /* slow grinding turns uphill */
+  86%  { transform: rotate(2400deg); }  /* whips around on the tumble down */
+  100% { transform: rotate(2520deg); }
+}
+
+/* Sisyphus */
+.figure {
+  position: absolute;
+  left: 0; bottom: 28px;
+  width: 60px; height: 96px;
+  transform-origin: bottom center;
+  animation: heave var(--cycle, 11s) ease-in-out infinite;
+}
+.figure svg { width: 100%; height: 100%; overflow: visible; display:block; }
+@keyframes heave {
+  0%,72%  { transform: rotate(-26deg); }           /* leaning hard into the climb */
+  76%     { transform: rotate(-26deg); }
+  78%     { transform: rotate(10deg); }            /* recoils as it slips */
+  80%     { transform: rotate(-6deg); }
+  86%     { transform: rotate(4deg); }             /* trudging back, upright-ish */
+  100%    { transform: rotate(-20deg); }
+}
+
+/* ground mist */
+.mist {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 22%;
+  background: linear-gradient(0deg, rgba(176,106,58,0.55), transparent);
+  z-index: 15; pointer-events: none;
+}
+
+/* ── EPIGRAPH (bottom) ──────────────────────────────────── */
+.epigraph {
+  position: absolute;
+  bottom: 18px; left: 0; right: 0;
+  z-index: 25;
+  text-align: center;
+  font-style: italic;
+  font-size: clamp(11px, 1.5vw, 16px);
+  color: var(--parchment);
+  opacity: 0.7;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+  padding: 0 24px;
+  pointer-events: none;
+}
+.epigraph .src { display:block; font-style: normal; font-family:'Cinzel',serif; font-size: 0.7em; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.6; margin-top: 5px; }
+
+/* ── CHROME (corner controls) ───────────────────────────── */
+.chrome { position: absolute; z-index: 40; }
+.brand {
+  top: 16px; left: 20px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold-lt); opacity: 0.8; text-decoration: none;
+}
+.brand:hover { opacity: 1; }
+.fs-btn {
+  bottom: 16px; right: 18px;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 15px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(232,184,92,0.4);
+  color: var(--gold-lt);
+  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  cursor: pointer; border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.fs-btn:hover { background: rgba(232,184,92,0.18); color: #fff; }
+
+@media (max-width: 600px) {
+  .sun { width: 60px; height: 60px; top: 13%; }
+  .boulder { width: 64px; height: 64px; }
+  .figure { width: 46px; height: 74px; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="stars" id="stars"></div>
+  <div class="sun"></div>
+
+  <!-- counter -->
+  <div class="counter">
+    <div class="counter-label">VC Capital Incinerated</div>
+    <div class="counter-amount" id="amount"><span class="dollar">$</span>0<span class="cents">.00</span></div>
+    <div class="counter-sub">Running Claude Sonnet on an infinite loop, once every minute. Forever.</div>
+    <div class="run-pill">
+      <span class="run-dot" id="dot"></span>
+      <span id="runtxt">Awaiting next inference…</span>
+    </div>
+  </div>
+
+  <!-- hill -->
+  <div class="hill">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+      <polygon points="0,100 0,96 80,4 100,0 100,100" fill="#14110a"/>
+      <polygon points="0,100 0,97 80,8 78,12 0,100" fill="#211a0e" opacity="0.6"/>
+    </svg>
+  </div>
+
+  <!-- Sisyphus + boulder, traveling the incline -->
+  <div class="mover" id="mover">
+    <div class="boulder"></div>
+    <div class="figure">
+      <svg viewBox="0 0 60 96">
+        <!-- back leg -->
+        <path d="M26 60 L14 92" stroke="#2a2018" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <!-- front leg -->
+        <path d="M30 58 L40 90" stroke="#3a2c20" stroke-width="7" stroke-linecap="round" fill="none"/>
+        <!-- torso, bent forward pushing -->
+        <path d="M22 54 Q42 40 52 36" stroke="#4a3424" stroke-width="11" stroke-linecap="round" fill="none"/>
+        <!-- arm reaching to the boulder -->
+        <path d="M40 44 Q52 40 58 42" stroke="#3a2c20" stroke-width="6" stroke-linecap="round" fill="none"/>
+        <!-- head -->
+        <circle cx="54" cy="33" r="7" fill="#5a4030"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="mist"></div>
+
+  <div class="epigraph">
+    “One must imagine the burn rate happy.”
+    <span class="src">After Camus · Series A, 2026</span>
+  </div>
+
+  <a href="index.html" class="chrome brand">← The Odyssey</a>
+  <button class="chrome fs-btn" id="fsBtn">⛶ Fullscreen</button>
+</div>
+
+<script>
+/* ───────── Stars ───────── */
+(function(){
+  const wrap = document.getElementById('stars');
+  let html = '';
+  for (let i = 0; i < 70; i++) {
+    const x = Math.random()*100, y = Math.random()*62;
+    const d = (Math.random()*3.5).toFixed(2);
+    const s = (1 + Math.random()*1.6).toFixed(1);
+    html += `<span class="star" style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;animation-delay:${d}s"></span>`;
+  }
+  wrap.innerHTML = html;
+})();
+
+/* ───────── The Burn Counter ─────────
+   The conceit: one Claude Sonnet inference fires every 60s, forever,
+   since the rock was first pushed. We bill it continuously so the number
+   never stops climbing — like the boulder, it always resets to "more".
+
+   Cost model (deliberately, comically generous):
+   ~per-minute Sonnet run, amortised + the cloud/infra/observability tax
+   a VC-funded startup inevitably stacks on top of a single API call.
+*/
+const EPOCH      = Date.parse('2026-06-12T00:00:00Z'); // the day the boulder started rolling
+const PER_RUN    = 0.47;        // notional $ per Sonnet inference
+const TAX_MULT   = 18.5;        // infra + headcount + "AI strategy" overhead multiplier
+const PER_MINUTE = PER_RUN * TAX_MULT;          // ≈ $8.70 / min
+const PER_MS     = PER_MINUTE / 60000;
+
+const amountEl = document.getElementById('amount');
+const dot      = document.getElementById('dot');
+const runtxt   = document.getElementById('runtxt');
+
+let lastRunMinute = -1;
+
+function fmt(n){
+  const dollars = Math.floor(n);
+  const cents = Math.floor((n - dollars) * 100);
+  return {
+    d: dollars.toLocaleString('en-US'),
+    c: cents.toString().padStart(2,'0')
+  };
+}
+
+function tick(){
+  const now = Date.now();
+  const burned = Math.max(0, (now - EPOCH) * PER_MS);
+  const f = fmt(burned);
+  amountEl.innerHTML =
+    `<span class="dollar">$</span>${f.d}<span class="cents">.${f.c}</span>`;
+
+  // fire a "run" pulse at each new minute boundary
+  const minute = Math.floor(now / 60000);
+  const secsIntoMin = (now % 60000) / 1000;
+  if (minute !== lastRunMinute && secsIntoMin < 1.2) {
+    lastRunMinute = minute;
+    dot.classList.remove('fire'); void dot.offsetWidth; dot.classList.add('fire');
+    runtxt.textContent = 'Inference complete — invoice sent';
+    setTimeout(()=>{ if(runtxt) runtxt.textContent = 'Awaiting next inference…'; }, 4000);
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ───────── Fullscreen ───────── */
+const fsBtn = document.getElementById('fsBtn');
+fsBtn.addEventListener('click', () => {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || (()=>{})).call(el);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || (()=>{})).call(document);
+  }
+});
+document.addEventListener('fullscreenchange', () => {
+  fsBtn.textContent = document.fullscreenElement ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
+});
+</script>
+</body>
+</html>
