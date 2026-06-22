@@ -142,12 +142,14 @@ body { font-family: 'EB Garamond', Georgia, serif; color: var(--ink); background
 }
 .dow {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   background: var(--ink);
   color: var(--parchment);
   text-align: center;
   padding: 6px 0;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 .cell {
@@ -810,7 +812,7 @@ const CAL_DATA = {
 
 function renderCalendar(containerId, month, numDays, startDow) {
   const grid = document.getElementById(containerId);
-  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
     const el = document.createElement('div');
     el.className = 'dow';
     el.textContent = d;
