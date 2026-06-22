@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Summer 2026 — The Oddysey</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<script src="trip-data.js"></script>
 <style>
 :root {
   --gold:      #C8881C;
@@ -526,67 +527,12 @@ footer p {
 // ─────────────────────────────────────────────────────────────
 //  DATA
 // ─────────────────────────────────────────────────────────────
-const LEG_COLORS = {
-  portugal: '#1A7A4A',
-  naples:   '#D4A030',
-  travel:   '#8291AE',
-  istanbul: '#1C7293',
-  izmir:    '#C04020',
-  aegean:   '#3A8C7E',
-  work:     '#9E9E9E',
-  islands:  '#2980B9',
-  crete:    '#E67E22',
-  ithaca:   '#8E44AD',
-  espana:   '#C0392B',
-  nurnberg: '#D4A030',
-};
-const LEG_LABELS = {
-  portugal:'Portugal', naples:'Naples', travel:'Travel',
-  istanbul:'Istanbul', izmir:'İzmir', aegean:'Aegean Coast', work:'Work',
-  islands:'Greek Islands', crete:'Crete 🏍', ithaca:'Ithaca',
-  espana:'España 🏍', nurnberg:'Nürnberg',
-};
-const LEG_SHORT = {
-  portugal:'🇵🇹 PT', naples:'Naples', travel:'✈',
-  istanbul:'IST', izmir:'İzmir', aegean:'🚗 Coast', work:'Work',
-  islands:'🏝 Islands', crete:'🏍 Crete', ithaca:'⚓ Ithaca',
-  espana:'🏍 España', nurnberg:'🍺 Nürnb.',
-};
-
-const LEGS_DATA = [
-  { id:'portugal', phase:'🇵🇹 Portugal',    color:'#1A7A4A', dates:'Jun 19–22',
-    who:'Grant · Brandel', stay:'Lisbon area',
-    stops:'Lisbon, Portugal' },
-  { id:'naples',   phase:'Naples',          color:'#D4A030', dates:'Jun 19–22',
-    who:'Peter · Matt · Sam', stay:'Naples, Italy',
-    stops:'Naples, Italy' },
-  { id:'istanbul', phase:'Istanbul',        color:'#1C7293', dates:'Jun 23',
-    who:'Peter · Matt · Sam', stay:'Istanbul, Türkiye',
-    stops:'Arrive 00:05 (TK1880) · day in Istanbul' },
-  { id:'aegean',   phase:'🚗 Aegean Coast', color:'#3A8C7E', dates:'Jun 24–25',
-    who:'Peter · Matt · Sam', stay:'Çanakkale → Cunda (Ayvalık)',
-    stops:'Çanakkale · Mount Ida (Kaz Dağı) · Cunda' },
-  { id:'izmir',    phase:'İzmir',           color:'#C04020', dates:'Jun 26–27',
-    who:'Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)', stay:'Sığacık / İzmir, Türkiye',
-    stops:'Sığacık · İzmir, Türkiye' },
-  { id:'islands',  phase:'🏝 Greek Islands', color:'#2980B9', dates:'Jun 28–Jul 1',
-    who:'All five', stay:'Island hopping — Çeşme ferry across',
-    stops:'Çeşme · Chios · Samos · Mykonos · Santorini' },
-  { id:'crete',    phase:'🏍 Crete',        color:'#E67E22', dates:'Jul 1–4',
-    who:'All five', stay:'Crete — motorcycle',
-    stops:'Heraklion · Chania' },
-  { id:'ithaca',   phase:'⚓ Ithaca',       color:'#8E44AD', dates:'Jul 5–7',
-    who:'All five', stay:'Ithaca — Agent Ithaca',
-    stops:'Ithaca, Greece' },
-  { id:'espana',   phase:'🏍 España',       color:'#C0392B', dates:'Jul 7–12',
-    who:'Peter · Matt · Grant · Brandel', stay:'Bilbao → Picos → Pamplona → Donostia → Bilbao',
-    stops:'Bilbao · Picos de Europa · Pamplona · San Sebastián' },
-  { id:'nurnberg', phase:'🍺 Nürnberg',     color:'#D4A030', dates:'Jul 13–14',
-    who:'Peter · Matt · Grant · Brandel', stay:'Nürnberg — recovery day',
-    stops:'Nürnberg, Germany' },
-];
-
-const CREW = ['Peter','Matt','Sam','Grant','Brandel'];
+// Trip facts live in trip-data.js (shared with map.html).
+const LEG_COLORS = TRIP.LEG_COLORS;
+const LEG_LABELS = TRIP.LEG_LABELS;
+const LEG_SHORT  = TRIP.LEG_SHORT;
+const LEGS_DATA  = TRIP.LEGS;
+const CREW       = TRIP.CREW;
 
 // ─────────────────────────────────────────────────────────────
 //  SCHEDULE (m=5→June, m=6→July)
@@ -661,35 +607,7 @@ fill('Brandel', 6,13, 6,14, 'nurnberg');
 // ─────────────────────────────────────────────────────────────
 //  FLIGHT DETAILS  (keyed by flight number)
 // ─────────────────────────────────────────────────────────────
-const FLIGHT_DETAILS = {
-  'UA1970': {
-    flight: 'UA 1970', airline: 'United Airlines',
-    from: 'Los Angeles (LAX)', to: 'Newark (EWR)',
-    dep: 'Jun 19, 2026 · est. morning',
-    arr: 'Jun 19, 2026 · est. afternoon',
-    res: null, seat: null, cabin: null,
-    notes: 'Connecting to UA 966 · Exact times TBC',
-    confirmed: false,
-  },
-  'UA966': {
-    flight: 'UA 966', airline: 'United Airlines',
-    from: 'Newark (EWR)', to: 'Naples (NAP)',
-    dep: 'Jun 19, 2026 · est. evening',
-    arr: 'Jun 20, 2026 · est. morning',
-    res: null, seat: null, cabin: null,
-    notes: 'Overnight transatlantic · Exact times TBC',
-    confirmed: false,
-  },
-  'TK1880': {
-    flight: 'TK 1880', airline: 'Turkish Airlines',
-    from: 'Naples (NAP)', to: 'Istanbul (IST)',
-    dep: 'Jun 22, 2026 · 20:45',
-    arr: 'Jun 23, 2026 · 00:05',
-    res: 'U3VWXQ', seat: null, cabin: 'Economy — EcoFly',
-    notes: 'Peter · Matt · Sam · Cabin baggage only · 1 × 8 kg',
-    confirmed: true,
-  },
-};
+const FLIGHT_DETAILS = TRIP.FLIGHTS;
 
 const SLOT_OVERRIDES = [
   // Peter — UA1970 LAX→EWR + UA966 EWR→NAP, Jun 19–20
@@ -762,14 +680,24 @@ function getOverrides(person, m, d) {
     c.style.cssText = 'background:#EFE3C0;border-right:1px solid #DDD0A0;border-bottom:1px solid #DDD0A0;padding:18px 20px 18px 24px;position:relative;transition:background .15s;';
     c.onmouseenter = () => c.style.background = '#E5D5AA';
     c.onmouseleave = () => c.style.background = '#EFE3C0';
+    // stops is a structured array; render a compact " · "-joined trail
+    const stopTrail = (leg.stops || [])
+      .map(s => s.name.split(',')[0].split(' —')[0])
+      .join(' · ');
+    const highlights = (leg.highlights || []).slice(0, 3);
     c.innerHTML = `
       <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:${leg.color}"></div>
       <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px;">
         <span style="font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.07em;color:#1A1209;flex:1;">${leg.phase}</span>
         <span style="font-family:'EB Garamond',serif;font-size:13px;color:#8B1A1A;font-style:italic;white-space:nowrap;">${leg.dates}</span>
       </div>
+      <div style="font-family:'EB Garamond',serif;font-size:12.5px;color:#7A6840;margin-bottom:6px;">${leg.who || ''}</div>
+      ${leg.summary ? `<div style="font-family:'EB Garamond',serif;font-size:13px;color:#4A3D24;line-height:1.5;margin-bottom:7px;">${leg.summary}</div>` : ''}
       <div style="font-family:'EB Garamond',serif;font-size:13px;color:#555;margin-bottom:2px;">&#9665; ${leg.stay}</div>
-      <div style="font-family:'EB Garamond',serif;font-size:12px;color:#888;font-style:italic;">${leg.stops}</div>
+      <div style="font-family:'EB Garamond',serif;font-size:12px;color:#888;font-style:italic;">${stopTrail}</div>
+      ${highlights.length ? `<ul style="list-style:none;margin-top:8px;padding:0;">${
+        highlights.map(h => `<li style="font-family:'EB Garamond',serif;font-size:12px;color:#6A5C40;line-height:1.5;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:${leg.color};">◆</span>${h}</li>`).join('')
+      }</ul>` : ''}
     `;
     grid.appendChild(c);
   });
@@ -1035,12 +963,14 @@ const CREW_INFO = [
   {name:'Brandel', sub:'Crew'},
 ];
 const crewGrid = document.getElementById('crew-grid');
-CREW_INFO.forEach(c => {
-  const card = document.createElement('div');
-  card.className = 'crew-card';
-  card.innerHTML = '<div class="crew-name">' + c.name + '</div>';
-  crewGrid.appendChild(card);
-});
+if (crewGrid) {
+  CREW_INFO.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'crew-card';
+    card.innerHTML = '<div class="crew-name">' + c.name + '</div>';
+    crewGrid.appendChild(card);
+  });
+}
 
 // ─────────────────────────────────────────────────────────────
 //  FLIGHT DETAIL MODAL

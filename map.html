@@ -6,6 +6,7 @@
 <title>Summer 2026 — Interactive Map</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="trip-data.js"></script>
 <script src="odyssey-overlay.js"></script>
 <script src="road-geometry.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -141,6 +142,34 @@ html, body { height: 100%; font-family: 'EB Garamond', Georgia, serif; }
   font-size: 11.5px;
   color: #6A5C48;
   font-style: italic;
+}
+.leg-summary {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: #9A8A6C;
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+.leg-hl {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+.leg-hl li {
+  font-family: 'EB Garamond', serif;
+  font-size: 11.5px;
+  color: #8A7A5C;
+  line-height: 1.5;
+  padding-left: 12px;
+  position: relative;
+}
+.leg-hl li::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  color: var(--leg-color, #C8881C);
+  font-size: 8px;
+  top: 3px;
 }
 
 .side-back {
@@ -286,60 +315,8 @@ html, body { height: 100%; font-family: 'EB Garamond', Georgia, serif; }
 </div>
 
 <script>
-const LEGS = [
-  { phase:'🇵🇹 Portugal',    color:'#1A7A4A', dates:'Jun 19–22',
-    who:'Grant · Brandel', stay:'Portugal',
-    stops:[{name:'Lisbon, Portugal', lat:38.7223, lng:-9.1393, note:'Grant & Brandel pre-trip'}] },
-  { phase:'Naples',          color:'#D4A030', dates:'Jun 19–22',
-    who:'Peter · Matt · Sam', stay:'Naples, Italy',
-    stops:[{name:'Naples, Italy', lat:40.8518, lng:14.2681, note:'Trip kick-off'}] },
-  { phase:'Istanbul',        color:'#1C7293', dates:'Jun 23',
-    who:'Peter · Matt · Sam', stay:'Istanbul, Türkiye',
-    stops:[{name:'Istanbul, Türkiye', lat:41.0082, lng:28.9784, note:'TK1880 NAP→IST arr. 00:05 Jun 23 · res. U3VWXQ · day in Istanbul'}] },
-  { phase:'🚗 Aegean Coast', color:'#3A8C7E', dates:'Jun 24–25',
-    who:'Peter · Matt · Sam', stay:'Çanakkale → Cunda (Ayvalık)',
-    stops:[
-      {name:'Çanakkale, Türkiye',   lat:40.1553, lng:26.4142, note:'Drive south Jun 24 · overnight'},
-      {name:'Mount Ida (Kaz Dağı)', lat:39.7167, lng:26.8500, note:'Climb Jun 25 · mythic Mt Ida'},
-      {name:'Cunda (Ayvalık)',      lat:39.3370, lng:26.6580, note:'Night Jun 25'},
-    ]},
-  { phase:'İzmir',           color:'#C04020', dates:'Jun 26–27',
-    who:'Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)', stay:'Sığacık / İzmir, Türkiye',
-    stops:[
-      {name:'Sığacık, Türkiye', lat:38.1969, lng:26.7869, note:'Arrive Jun 26'},
-      {name:'İzmir, Türkiye',   lat:38.4237, lng:27.1428, note:'Grant & Brandel fly into ADB — picked up Jun 27 morning'},
-    ]},
-  { phase:'🏝 Greek Islands', color:'#2980B9', dates:'Jun 28–Jul 1',
-    who:'All five', stay:'Island hopping — Çeşme ferry across',
-    stops:[
-      {name:'Çeşme, Türkiye',     lat:38.3234, lng:26.3008, note:'Ferry crossing to Chios'},
-      {name:'Chios, Greece',      lat:38.3683, lng:26.1394, note:''},
-      {name:'Samos, Greece',      lat:37.7519, lng:26.9783, note:''},
-      {name:'Mykonos, Greece',    lat:37.4415, lng:25.3616, note:''},
-      {name:'Santorini, Greece',  lat:36.3932, lng:25.4615, note:'Heading south to Crete'},
-    ]},
-  { phase:'🏍 Crete',         color:'#E67E22', dates:'Jul 1–4',
-    who:'All five', stay:'Crete — motorcycle',
-    stops:[
-      {name:'Heraklion, Crete',  lat:35.3387, lng:25.1442, note:'Arrive Jul 1'},
-      {name:'Chania, Crete',     lat:35.5138, lng:24.0180, note:'Riding west'},
-    ]},
-  { phase:'⚓ Ithaca',        color:'#8E44AD', dates:'Jul 5–7',
-    who:'All five', stay:'Ithaca — Agent Ithaca',
-    stops:[{name:'Ithaca, Greece', lat:38.4167, lng:20.6833, note:'The final destination'}] },
-  { phase:'🏍 España',        color:'#C0392B', dates:'Jul 7–12',
-    who:'Peter · Matt · Grant · Brandel', stay:'Bilbao → Picos → Pamplona → Donostia → Bilbao',
-    stops:[
-      {name:'Bilbao, Spain',              lat:43.2630, lng:-2.9350, note:'Fly in from Greece · Jul 7'},
-      {name:'Picos de Europa',            lat:43.1937, lng:-4.8406, note:'Cantabrian mountain riding'},
-      {name:'Pamplona, Spain',            lat:42.8125, lng:-1.6458, note:'🐂 Running of the Bulls · Jul 11'},
-      {name:'San Sebastián (Donostia)',   lat:43.3183, lng:-1.9812, note:'Basque Country · Jul 12'},
-      {name:'Bilbao — fly out',           lat:43.2950, lng:-2.9100, note:'Return to Bilbao · fly to Nürnberg Jul 13'},
-    ]},
-  { phase:'🍺 Nürnberg',      color:'#D4A030', dates:'Jul 13–14',
-    who:'Peter · Matt · Grant · Brandel', stay:'Nürnberg — recovery day',
-    stops:[{name:'Nürnberg, Germany', lat:49.4521, lng:11.0767, note:'Recovery 🍺'}] },
-];
+// Leg facts come from trip-data.js (shared with index.html).
+const LEGS = TRIP.LEGS;
 
 // ── MAP INIT ────────────────────────────────────────────────
 const map = L.map('map');
@@ -351,7 +328,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Flatten stops
 const flatStops = [];
 LEGS.forEach((leg, li) => {
-  leg.stops.forEach(s => flatStops.push({...s, color:leg.color, li, phase:leg.phase, dates:leg.dates, who:leg.who, stay:leg.stay}));
+  leg.stops.forEach(s => flatStops.push({...s, color:leg.color, li, phase:leg.phase, dates:leg.dates, who:leg.who, stay:leg.stay, transport:leg.transport, summary:leg.summary}));
 });
 
 // Markers
@@ -367,7 +344,9 @@ flatStops.forEach(s => {
     '<b>' + s.name + '</b>' +
     '<div class="meta">' + s.phase + ' · ' + s.dates + '</div>' +
     '<div class="note">' + s.who + '</div>' +
+    (s.summary ? '<div class="note" style="margin-top:3px;">' + s.summary + '</div>' : '') +
     '<div class="note"><b>Stay:</b> ' + s.stay + (s.note ? ' · <i>' + s.note + '</i>' : '') + '</div>' +
+    (s.transport ? '<div class="note"><b>Travel:</b> ' + s.transport + '</div>' : '') +
     '</div>'
   );
   if (firstMarker[s.li] === undefined) firstMarker[s.li] = m;
@@ -504,14 +483,17 @@ LEGS.forEach((leg, li) => {
   const d = document.createElement('div');
   d.className = 'leg-item';
   d.style.setProperty('--leg-color', leg.color);
+  const hi = (leg.highlights || []).slice(0, 3);
   d.innerHTML =
     '<div class="leg-top">' +
       '<span class="leg-name">' + leg.phase + '</span>' +
       '<span class="leg-dates">' + leg.dates + '</span>' +
     '</div>' +
     '<div class="leg-who">' + leg.who + '</div>' +
+    (leg.summary ? '<div class="leg-summary">' + leg.summary + '</div>' : '') +
     '<div class="leg-stay">&#9665; ' + leg.stay + '</div>' +
-    (leg.stops.length > 1 ? '<div class="leg-stops">' + stopNames + '</div>' : '');
+    (leg.stops.length > 1 ? '<div class="leg-stops">' + stopNames + '</div>' : '') +
+    (hi.length ? '<ul class="leg-hl">' + hi.map(h => '<li>' + h + '</li>').join('') + '</ul>' : '');
   d.onclick = () => {
     document.querySelectorAll('.leg-item').forEach(el => el.classList.remove('active'));
     d.classList.add('active');
