@@ -200,9 +200,124 @@ window.TRIP = (function () {
     },
   };
 
+  // Days ------------------------------------------------------------------
+  // Per-day fidelity, keyed "m-d" (m: 5=June, 6=July). Every field is
+  // optional; the day card synthesises whatever is present together with
+  // the leg, the who's-where schedule and any flights.
+  //   title    — short headline for the day
+  //   legId    — primary leg this day belongs to
+  //   summary  — a sentence of context
+  //   schedule — [{ time, text, icon }] rough timeline (time is free-text)
+  //   flights  — flight keys (see FLIGHTS) happening this day
+  //   notes    — free-text aside
+  const DAYS = {
+    '5-19': { legId: 'naples', title: 'Wheels up', flights: ['UA1970', 'UA966'],
+      summary: 'The voyage begins — Peter, Matt & Sam fly LA → Newark → Naples overnight; Grant & Brandel settle into Lisbon.',
+      schedule: [
+        { time: 'Morning', icon: '🛫', text: 'UA1970 departs Los Angeles (LAX)' },
+        { time: 'Evening', icon: '✈', text: 'UA966 Newark → Naples, overnight transatlantic' },
+      ] },
+    '5-20': { legId: 'naples', title: 'Landfall in Naples',
+      summary: 'Touch down on the Bay of Naples in the morning and find our feet.',
+      schedule: [{ time: 'Morning', icon: '🛬', text: 'Arrive Naples (NAP)' }] },
+    '5-21': { legId: 'naples', title: 'Naples',
+      summary: 'A full day in Naples — pizza in its homeland.' },
+    '5-22': { legId: 'naples', title: 'Naples → Istanbul', flights: ['TK1880'],
+      summary: 'Last of Naples, then the evening hop east across the Aegean world.',
+      schedule: [
+        { time: 'Day', icon: '🍕', text: 'Final hours in Naples' },
+        { time: '20:45', icon: '✈', text: 'TK1880 departs Naples for Istanbul' },
+      ] },
+    '5-23': { legId: 'istanbul', title: 'Istanbul, two continents',
+      summary: 'Land at 00:05 and take a full day in the city on the strait.',
+      schedule: [
+        { time: '00:05', icon: '🛬', text: 'Arrive Istanbul (IST) · res. U3VWXQ' },
+        { time: 'Day', icon: '🕌', text: 'Istanbul — between Europe and Asia' },
+      ] },
+    '5-24': { legId: 'aegean', title: 'South to Çanakkale',
+      summary: 'Pick up the car and drive down the coast toward the plains of Troy.',
+      schedule: [
+        { time: 'Morning', icon: '🕌', text: 'Last of Istanbul' },
+        { time: 'Afternoon', icon: '🚗', text: 'Drive to Çanakkale via the bridge' },
+      ] },
+    '5-25': { legId: 'aegean', title: 'Mount Ida',
+      summary: 'Climb mythic Mount Ida (Kaz Dağı), then on to the island of Cunda for the night.',
+      schedule: [
+        { time: 'Morning', icon: '🏔', text: 'Climb Mount Ida (Kaz Dağı)' },
+        { time: 'Evening', icon: '🌅', text: 'Cross to Cunda (Ayvalık)' },
+      ] },
+    '5-26': { legId: 'izmir', title: 'Cunda → Sığacık',
+      summary: 'Coast road south to the seaside town of Sığacık.',
+      schedule: [{ time: 'Afternoon', icon: '🚗', text: 'Drive to Sığacık' }] },
+    '5-27': { legId: 'izmir', title: 'The crew reunites',
+      summary: 'Grant & Brandel fly into İzmir (ADB); all five together, staging for the island crossing.',
+      schedule: [
+        { time: 'Morning', icon: '🛬', text: 'Grant & Brandel land at İzmir (ADB) — picked up' },
+        { time: 'Day', icon: '⚓', text: 'Provision for the Greek islands' },
+      ] },
+    '5-28': { legId: 'islands', title: 'Across to Greece',
+      summary: 'Ferry from Çeşme over to Chios — the island hop begins.',
+      schedule: [{ time: 'Day', icon: '⛴', text: 'Çeşme → Chios crossing' }] },
+    '5-29': { legId: 'islands', title: 'Aegean hopping',
+      summary: 'Down the chain toward Samos.' },
+    '5-30': { legId: 'islands', title: 'Toward the Cyclades',
+      summary: 'On toward Mykonos.' },
+    '6-1':  { legId: 'crete', title: 'On to Crete',
+      summary: 'South past Santorini and over to Heraklion to pick up the bikes.',
+      schedule: [{ time: 'Day', icon: '⛴', text: 'Santorini → Heraklion' }] },
+    '6-2':  { legId: 'crete', title: 'Riding Crete',
+      summary: 'Motorcycle the north coast.' },
+    '6-3':  { legId: 'crete', title: 'West to Chania',
+      summary: 'Ride west toward Chania.',
+      schedule: [{ time: 'Day', icon: '🏍', text: 'Heraklion → Chania' }] },
+    '6-4':  { legId: 'crete', title: 'Crete',
+      summary: 'Last of Crete before the long ferry to the Ionian.' },
+    '6-5':  { legId: 'ithaca', title: 'To Ithaca',
+      summary: 'The long ferry round the Peloponnese into the Ionian Sea.',
+      schedule: [{ time: 'Day', icon: '⛴', text: 'Round the Peloponnese to Ithaca' }] },
+    '6-6':  { legId: 'ithaca', title: 'Ithaca — the nostos',
+      summary: 'The homecoming. The journey’s mythic end-point.' },
+    '6-7':  { legId: 'ithaca', title: 'Ithaca → Spain',
+      summary: 'Sam flies home; the others fly on to Bilbao for the Basque ride.',
+      schedule: [
+        { time: 'Day', icon: '🛫', text: 'Sam departs for home' },
+        { time: 'Day', icon: '✈', text: 'Peter · Matt · Grant · Brandel fly to Bilbao' },
+      ] },
+    '6-8':  { legId: 'espana', title: 'Basque Country',
+      summary: 'Pick up bikes in Bilbao and head for the Picos.' },
+    '6-9':  { legId: 'espana', title: 'Picos de Europa',
+      summary: 'Cantabrian mountain riding.' },
+    '6-10': { legId: 'espana', title: 'Riding on',
+      summary: 'Through the mountains toward Navarre.' },
+    '6-11': { legId: 'espana', title: 'Pamplona — the bulls',
+      summary: 'San Fermín — the Running of the Bulls.',
+      schedule: [{ time: 'Morning', icon: '🐂', text: 'Running of the Bulls, Pamplona' }] },
+    '6-12': { legId: 'espana', title: 'San Sebastián',
+      summary: 'Pintxos and the Bay of La Concha in Donostia.',
+      schedule: [{ time: 'Evening', icon: '🍴', text: 'Pintxos crawl in San Sebastián' }] },
+    '6-13': { legId: 'nurnberg', title: 'Bilbao → Nürnberg',
+      summary: 'Return to Bilbao and fly to Nürnberg.',
+      schedule: [{ time: 'Day', icon: '✈', text: 'Bilbao → Nürnberg' }] },
+    '6-14': { legId: 'nurnberg', title: 'Recovery',
+      summary: 'Wind-down in Nürnberg before heading home. 🍺' },
+  };
+
+  // Suggestions / ideas ---------------------------------------------------
+  // Shared "starter" ideas, committed in code so the whole crew sees them.
+  // Anything added on the page itself is saved per-browser (localStorage),
+  // so this list is the shared baseline everyone starts from.
+  //   text — the idea
+  //   tag  — optional short label (a leg id, a place, a theme)
+  const SUGGESTIONS = [
+    { text: 'Catch the sunset in Oia, Santorini before heading south to Crete', tag: 'islands' },
+    { text: 'Find a proper hammam in Istanbul on the free day', tag: 'istanbul' },
+    { text: 'Scout balcony / viewing spots in Pamplona early', tag: 'espana' },
+    { text: 'Build a pintxos shortlist for San Sebastián', tag: 'espana' },
+  ];
+
   // Convenience lookups ---------------------------------------------------
   const LEG_BY_ID = {};
   LEGS.forEach(l => { LEG_BY_ID[l.id] = l; });
 
-  return { CREW, LEG_COLORS, LEG_LABELS, LEG_SHORT, LEGS, LEG_BY_ID, FLIGHTS };
+  return { CREW, LEG_COLORS, LEG_LABELS, LEG_SHORT, LEGS, LEG_BY_ID, FLIGHTS, DAYS, SUGGESTIONS };
 })();
