@@ -528,6 +528,7 @@ const LEG_COLORS = {
   travel:   '#8291AE',
   istanbul: '#1C7293',
   izmir:    '#C04020',
+  aegean:   '#3A8C7E',
   work:     '#9E9E9E',
   islands:  '#2980B9',
   crete:    '#E67E22',
@@ -537,13 +538,13 @@ const LEG_COLORS = {
 };
 const LEG_LABELS = {
   portugal:'Portugal', naples:'Naples', travel:'Travel',
-  istanbul:'Istanbul', izmir:'İzmir', work:'Work',
+  istanbul:'Istanbul', izmir:'İzmir', aegean:'Aegean Coast', work:'Work',
   islands:'Greek Islands', crete:'Crete 🏍', ithaca:'Ithaca',
   espana:'España 🏍', nurnberg:'Nürnberg',
 };
 const LEG_SHORT = {
   portugal:'🇵🇹 PT', naples:'Naples', travel:'✈',
-  istanbul:'IST', izmir:'İzmir', work:'Work',
+  istanbul:'IST', izmir:'İzmir', aegean:'🚗 Coast', work:'Work',
   islands:'🏝 Islands', crete:'🏍 Crete', ithaca:'⚓ Ithaca',
   espana:'🏍 España', nurnberg:'🍺 Nürnb.',
 };
@@ -555,12 +556,15 @@ const LEGS_DATA = [
   { id:'naples',   phase:'Naples',          color:'#D4A030', dates:'Jun 19–22',
     who:'Peter · Matt · Sam', stay:'Naples, Italy',
     stops:'Naples, Italy' },
-  { id:'istanbul', phase:'Istanbul',        color:'#1C7293', dates:'Jun 23–25',
+  { id:'istanbul', phase:'Istanbul',        color:'#1C7293', dates:'Jun 23',
     who:'Peter · Matt · Sam', stay:'Istanbul, Türkiye',
-    stops:'Istanbul, Türkiye' },
+    stops:'Arrive 00:05 (TK1880) · day in Istanbul' },
+  { id:'aegean',   phase:'🚗 Aegean Coast', color:'#3A8C7E', dates:'Jun 24–25',
+    who:'Peter · Matt · Sam', stay:'Çanakkale → Cunda (Ayvalık)',
+    stops:'Çanakkale · Mount Ida (Kaz Dağı) · Cunda' },
   { id:'izmir',    phase:'İzmir',           color:'#C04020', dates:'Jun 26–27',
-    who:'Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)', stay:'İzmir, Türkiye',
-    stops:'İzmir, Türkiye' },
+    who:'Peter · Matt · Sam · Grant (ADB) · Brandel (ADB)', stay:'Sığacık / İzmir, Türkiye',
+    stops:'Sığacık · İzmir, Türkiye' },
   { id:'islands',  phase:'🏝 Greek Islands', color:'#2980B9', dates:'Jun 28–Jul 1',
     who:'All five', stay:'Island hopping — Çeşme ferry across',
     stops:'Çeşme · Chios · Samos · Mykonos · Santorini' },
@@ -597,7 +601,8 @@ function fill(name, m1, d1, m2, d2, legId) {
 }
 // Peter — flies Naples→Istanbul TK1880 Jun 22 eve, arrives Jun 23 00:05
 fill('Peter',   5,19, 5,22, 'naples');
-fill('Peter',   5,23, 5,25, 'istanbul');
+fill('Peter',   5,23, 5,23, 'istanbul');
+fill('Peter',   5,24, 5,25, 'aegean');
 fill('Peter',   5,26, 5,27, 'izmir');
 fill('Peter',   5,28, 6, 1, 'islands');
 fill('Peter',   6, 1, 6, 4, 'crete');
@@ -607,7 +612,8 @@ fill('Peter',   6,13, 6,14, 'nurnberg');
 
 // Matt — TK1880 Jun 22 eve, Istanbul from Jun 23
 fill('Matt',    5,19, 5,22, 'naples');
-fill('Matt',    5,23, 5,25, 'istanbul');
+fill('Matt',    5,23, 5,23, 'istanbul');
+fill('Matt',    5,24, 5,25, 'aegean');
 fill('Matt',    5,26, 5,27, 'izmir');
 fill('Matt',    5,28, 6, 1, 'islands');
 fill('Matt',    6, 1, 6, 4, 'crete');
@@ -617,7 +623,8 @@ fill('Matt',    6,13, 6,14, 'nurnberg');
 
 // Sam — TK1880 Jun 22 eve, Istanbul from Jun 23; flies home Jul 7 after Ithaca
 fill('Sam',     5,19, 5,22, 'naples');
-fill('Sam',     5,23, 5,25, 'istanbul');
+fill('Sam',     5,23, 5,23, 'istanbul');
+fill('Sam',     5,24, 5,25, 'aegean');
 fill('Sam',     5,26, 5,27, 'izmir');
 fill('Sam',     5,28, 6, 1, 'islands');
 fill('Sam',     6, 1, 6, 4, 'crete');
@@ -708,6 +715,32 @@ const SLOT_OVERRIDES = [
   {person:'Sam',     m:5, d:22, s0:3, s1:4, legId:'travel',   label:'✈ TK1880',   flightKey:'TK1880'},
   {person:'Sam',     m:5, d:23, s0:0, s1:1, legId:'travel',   label:'✈ arr. IST', flightKey:'TK1880'},
   {person:'Sam',     m:5, d:23, s0:1, s1:4, legId:'istanbul', label:'Istanbul'},
+
+  // Aegean coast road trip — Peter · Matt · Sam
+  //   Jun 24 drive south → Çanakkale · Jun 25 climb Mount Ida → Cunda · Jun 26 → Sığacık
+  {person:'Peter',   m:5, d:24, s0:0, s1:2, legId:'istanbul', label:'Istanbul'},
+  {person:'Peter',   m:5, d:24, s0:2, s1:4, legId:'aegean',   label:'🚗 Çanakkale'},
+  {person:'Peter',   m:5, d:25, s0:0, s1:1, legId:'aegean',   label:'Çanakkale'},
+  {person:'Peter',   m:5, d:25, s0:1, s1:3, legId:'aegean',   label:'🏔 Mt Ida'},
+  {person:'Peter',   m:5, d:25, s0:3, s1:4, legId:'aegean',   label:'Cunda'},
+  {person:'Peter',   m:5, d:26, s0:0, s1:2, legId:'aegean',   label:'Cunda'},
+  {person:'Peter',   m:5, d:26, s0:2, s1:4, legId:'izmir',    label:'🚗 Sığacık'},
+
+  {person:'Matt',    m:5, d:24, s0:0, s1:2, legId:'istanbul', label:'Istanbul'},
+  {person:'Matt',    m:5, d:24, s0:2, s1:4, legId:'aegean',   label:'🚗 Çanakkale'},
+  {person:'Matt',    m:5, d:25, s0:0, s1:1, legId:'aegean',   label:'Çanakkale'},
+  {person:'Matt',    m:5, d:25, s0:1, s1:3, legId:'aegean',   label:'🏔 Mt Ida'},
+  {person:'Matt',    m:5, d:25, s0:3, s1:4, legId:'aegean',   label:'Cunda'},
+  {person:'Matt',    m:5, d:26, s0:0, s1:2, legId:'aegean',   label:'Cunda'},
+  {person:'Matt',    m:5, d:26, s0:2, s1:4, legId:'izmir',    label:'🚗 Sığacık'},
+
+  {person:'Sam',     m:5, d:24, s0:0, s1:2, legId:'istanbul', label:'Istanbul'},
+  {person:'Sam',     m:5, d:24, s0:2, s1:4, legId:'aegean',   label:'🚗 Çanakkale'},
+  {person:'Sam',     m:5, d:25, s0:0, s1:1, legId:'aegean',   label:'Çanakkale'},
+  {person:'Sam',     m:5, d:25, s0:1, s1:3, legId:'aegean',   label:'🏔 Mt Ida'},
+  {person:'Sam',     m:5, d:25, s0:3, s1:4, legId:'aegean',   label:'Cunda'},
+  {person:'Sam',     m:5, d:26, s0:0, s1:2, legId:'aegean',   label:'Cunda'},
+  {person:'Sam',     m:5, d:26, s0:2, s1:4, legId:'izmir',    label:'🚗 Sığacık'},
 ];
 
 function getOverrides(person, m, d) {
@@ -748,10 +781,10 @@ const CAL_DATA = {
   '5-20':{bg:'#F2E4CA',bl:'#D4A030'},
   '5-21':{bg:'#F2E4CA',bl:'#D4A030'},
   '5-22':{bg:'#F2E4CA',bl:'#D4A030',chip:'✈ TK1880 20:45', cc:'#8291AE'},
-  '5-23':{bg:'#D4E8F0',bl:'#1C7293',chip:'✈ → Istanbul',  cc:'#1C7293'},
-  '5-24':{bg:'#D4E8F0',bl:'#1C7293',chip:'Istanbul',       cc:'#1C7293'},
-  '5-25':{bg:'#D4E8F0',bl:'#1C7293'},
-  '5-26':{bg:'#F2DDD5',bl:'#C04020',chip:'İzmir',          cc:'#C04020'},
+  '5-23':{bg:'#D4E8F0',bl:'#1C7293',chip:'✈ Istanbul 00:05', cc:'#1C7293'},
+  '5-24':{bg:'#D6EAE0',bl:'#3A8C7E',chip:'🚗 Çanakkale',     cc:'#3A8C7E'},
+  '5-25':{bg:'#D6EAE0',bl:'#3A8C7E',chip:'🏔 Ida → Cunda',   cc:'#3A8C7E'},
+  '5-26':{bg:'#F2DDD5',bl:'#C04020',chip:'🚗 Sığacık',       cc:'#C04020'},
   '5-27':{bg:'#F2DDD5',bl:'#C04020',chip:'⛴ set off',     cc:'#C04020'},
   '5-28':{bg:'#D5E8F4',bl:'#2980B9',chip:'🏝 Islands',    cc:'#2980B9'},
   '5-29':{bg:'#D5E8F4',bl:'#2980B9'},
@@ -811,6 +844,7 @@ const LEGEND_ITEMS = [
   {label:'Naples',           color:'#D4A030'},
   {label:'Travel',           color:'#8291AE'},
   {label:'Istanbul',         color:'#1C7293'},
+  {label:'Aegean Coast 🚗',  color:'#3A8C7E'},
   {label:'İzmir',            color:'#C04020'},
   {label:'Greek Islands 🏝', color:'#2980B9'},
   {label:'Crete 🏍',         color:'#E67E22'},
