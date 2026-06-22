@@ -282,10 +282,80 @@ footer p {
   opacity: 0.6;
 }
 
+/* ── BY THE DAY ───────────────────────────────────────────── */
+.day-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 22px;
+  scrollbar-width: thin;
+}
+.day-strip::-webkit-scrollbar { height: 5px; }
+.day-strip::-webkit-scrollbar-thumb { background: var(--parch2); border-radius: 3px; }
+.day-pill {
+  flex: 0 0 auto;
+  min-width: 52px;
+  background: #E8DCC0;
+  border: none;
+  border-top: 3px solid var(--day-color, #888);
+  padding: 7px 9px 8px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 0 0 3px 3px;
+  transition: background 0.15s, transform 0.1s;
+  font-family: 'EB Garamond', serif;
+}
+.day-pill:hover { background: #E0D2A8; }
+.day-pill.active { background: var(--cream); transform: translateY(-2px); box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
+.day-pill .dp-dow { font-family: 'Cinzel', serif; font-size: 8.5px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+.day-pill .dp-num { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.day-pill .dp-mon { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+.day-pill.is-today .dp-num { color: var(--crimson); }
+.day-pill.is-today::after {
+  content: 'TODAY'; display: block; font-family: 'Cinzel', serif; font-size: 6.5px;
+  letter-spacing: 0.14em; color: var(--crimson); margin-top: 1px;
+}
+.day-pill.is-past { opacity: 0.78; }
+
+.daycard {
+  background: var(--cream);
+  border-left: 5px solid var(--day-color, #888);
+  box-shadow: 0 2px 14px rgba(26,18,9,0.07);
+  padding: 22px 26px 26px;
+}
+.daycard-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; }
+.daycard-date { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.16em; color: var(--crimson); text-transform: uppercase; }
+.daycard-leg { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.1em; color: #fff; background: var(--day-color, #888); padding: 3px 10px; border-radius: 2px; }
+.daycard-title { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; color: var(--ink); margin: 6px 0 4px; }
+.daycard-summary { font-family: 'EB Garamond', serif; font-size: 15.5px; font-style: italic; color: #4A3D24; line-height: 1.5; margin-bottom: 18px; }
+.daycard-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 30px; }
+.dc-block h4 {
+  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--crimson); margin-bottom: 9px; border-bottom: 1px solid var(--parch2); padding-bottom: 5px;
+}
+.dc-timeline { list-style: none; }
+.dc-timeline li { display: flex; gap: 10px; margin-bottom: 9px; font-family: 'EB Garamond', serif; font-size: 14px; color: var(--ink); line-height: 1.4; }
+.dc-time { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.05em; color: var(--muted); min-width: 58px; flex: 0 0 58px; text-transform: uppercase; padding-top: 2px; }
+.dc-ico { flex: 0 0 auto; }
+.dc-flight { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: rgba(130,145,174,0.16); border: 1px solid rgba(130,145,174,0.4); padding: 4px 9px; border-radius: 3px; margin: 0 6px 6px 0; font-family: 'EB Garamond', serif; font-size: 13px; color: var(--ink); transition: background 0.15s; }
+.dc-flight:hover { background: rgba(130,145,174,0.3); }
+.dc-who { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.dc-who-item { display: flex; align-items: center; gap: 7px; font-family: 'EB Garamond', serif; font-size: 13.5px; color: var(--ink); }
+.dc-who-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; border: 1px solid rgba(0,0,0,0.15); }
+.dc-who-leg { color: var(--muted); font-style: italic; font-size: 12.5px; }
+.dc-list { list-style: none; }
+.dc-list li { font-family: 'EB Garamond', serif; font-size: 13.5px; color: #4A3D24; line-height: 1.5; padding-left: 14px; position: relative; margin-bottom: 4px; }
+.dc-list li::before { content: '◆'; position: absolute; left: 0; color: var(--day-color, #888); font-size: 8px; top: 4px; }
+.dc-stay { font-family: 'EB Garamond', serif; font-size: 13.5px; color: #555; }
+
 @media (max-width: 700px) {
   .hero-title-band h1 { font-size: 38px; }
   .sec-head { padding: 10px 16px; }
   .wrap { padding: 20px 16px; }
+  .daycard-cols { grid-template-columns: 1fr; }
+  .daycard { padding: 18px 18px 22px; }
+  .daycard-title { font-size: 20px; }
 }
 </style>
 </head>
@@ -518,6 +588,19 @@ footer p {
   </div>
 </div>
 
+<!-- ═══ BY THE DAY ═══════════════════════════════════════════ -->
+<div class="meander"></div>
+<div class="sec-head">
+  <h2>By the Day</h2>
+  <span class="sec-sub">Every day, synthesised</span>
+</div>
+<div class="content-band">
+  <div class="wrap">
+    <div class="day-strip" id="day-strip"></div>
+    <div id="day-card"></div>
+  </div>
+</div>
+
 <div class="meander"></div>
 <footer>
   <p>Trip Hub · Summer 2026</p>
@@ -532,6 +615,7 @@ const LEG_COLORS = TRIP.LEG_COLORS;
 const LEG_LABELS = TRIP.LEG_LABELS;
 const LEG_SHORT  = TRIP.LEG_SHORT;
 const LEGS_DATA  = TRIP.LEGS;
+const LEG_BY_ID  = TRIP.LEG_BY_ID;
 const CREW       = TRIP.CREW;
 
 // ─────────────────────────────────────────────────────────────
@@ -951,6 +1035,163 @@ WEEKS.forEach(week => {
   wdiv.appendChild(scroll);
   matrixEl.appendChild(wdiv);
 });
+
+// ─────────────────────────────────────────────────────────────
+//  RENDER: BY THE DAY  (per-day synthesis card)
+// ─────────────────────────────────────────────────────────────
+const DAYS = TRIP.DAYS;
+const MON_ABBR = { 5: 'Jun', 6: 'Jul' };
+const MON_FULL = { 5: 'June', 6: 'July' };
+const DOW_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// Today, mapped onto the trip calendar (real clock; clamps outside June/July).
+function todayParts() {
+  const now = new Date();
+  return { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() };
+}
+// Compare a trip date {m,d} (m: 5=Jun,6=Jul, year 2026) against today.
+// Returns -1 past, 0 today, 1 future.
+function dayCmp(m, d) {
+  const t = todayParts();
+  const a = (2026 * 10000) + ((m === 5 ? 6 : 7) * 100) + d;
+  const b = (t.y * 10000) + (t.m * 100) + t.d;
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+// Which leg owns a given day (DAYS override wins, else the matrix schedule).
+function legForDay(m, d) {
+  const key = m + '-' + d;
+  if (DAYS[key] && DAYS[key].legId) return DAYS[key].legId;
+  // fall back to the most common crew leg that day
+  const tally = {};
+  CREW.forEach(p => {
+    const ov = getOverrides(p, m, d);
+    const leg = ov.length ? ov[ov.length - 1].legId : (SCHEDULE[p] || {})[key];
+    if (leg) tally[leg] = (tally[leg] || 0) + 1;
+  });
+  return Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0] || null;
+}
+
+// Where each crew member is on a given day.
+function whoIsWhere(m, d) {
+  const key = m + '-' + d;
+  return CREW.map(p => {
+    const ov = getOverrides(p, m, d);
+    const leg = ov.length ? ov[ov.length - 1].legId : (SCHEDULE[p] || {})[key];
+    const label = ov.length ? ov[ov.length - 1].label : (LEG_LABELS[leg] || '—');
+    return { person: p, legId: leg, label };
+  }).filter(w => w.legId);
+}
+
+const dayStripEl = document.getElementById('day-strip');
+const dayCardEl  = document.getElementById('day-card');
+
+function renderDayCard(m, d) {
+  const key = m + '-' + d;
+  const day = DAYS[key] || {};
+  const legId = legForDay(m, d);
+  const leg = LEG_BY_ID[legId] || {};
+  const color = LEG_COLORS[legId] || '#888';
+
+  const dateLabel = DOW_FULL[getDow(m, d)] + ', ' + MON_FULL[m] + ' ' + d;
+  const who = whoIsWhere(m, d);
+  const sched = day.schedule || [];
+  const flights = (day.flights || []).filter(k => FLIGHT_DETAILS[k]);
+  const highlights = leg.highlights || [];
+
+  const card = document.createElement('div');
+  card.className = 'daycard';
+  card.style.setProperty('--day-color', color);
+
+  let leftCol = '';
+  if (sched.length) {
+    leftCol += '<div class="dc-block"><h4>Timeline</h4><ul class="dc-timeline">' +
+      sched.map(s =>
+        '<li><span class="dc-time">' + (s.time || '') + '</span>' +
+        '<span class="dc-ico">' + (s.icon || '•') + '</span>' +
+        '<span>' + s.text + '</span></li>'
+      ).join('') + '</ul></div>';
+  }
+  if (flights.length) {
+    leftCol += '<div class="dc-block"><h4>Flights</h4><div>' +
+      flights.map(k => '<span class="dc-flight" data-flight="' + k + '">✈ ' +
+        FLIGHT_DETAILS[k].flight + '</span>').join('') + '</div></div>';
+  }
+
+  let rightCol = '';
+  if (who.length) {
+    rightCol += '<div class="dc-block"><h4>Who’s where</h4><div class="dc-who">' +
+      who.map(w =>
+        '<span class="dc-who-item"><span class="dc-who-dot" style="background:' +
+        (LEG_COLORS[w.legId] || '#888') + '"></span>' + w.person +
+        ' <span class="dc-who-leg">· ' + w.label + '</span></span>'
+      ).join('') + '</div></div>';
+  }
+  if (highlights.length) {
+    rightCol += '<div class="dc-block"><h4>' + (leg.phase || 'Leg') + '</h4>' +
+      (leg.stay ? '<div class="dc-stay">&#9665; ' + leg.stay + '</div>' : '') +
+      '<ul class="dc-list">' + highlights.map(h => '<li>' + h + '</li>').join('') +
+      '</ul></div>';
+  }
+  if (day.notes) {
+    rightCol += '<div class="dc-block"><h4>Notes</h4><div class="dc-stay">' + day.notes + '</div></div>';
+  }
+
+  card.innerHTML =
+    '<div class="daycard-head">' +
+      '<span class="daycard-date">' + dateLabel + '</span>' +
+      (leg.phase ? '<span class="daycard-leg">' + leg.phase + '</span>' : '') +
+    '</div>' +
+    '<div class="daycard-title">' + (day.title || leg.phase || dateLabel) + '</div>' +
+    (day.summary ? '<div class="daycard-summary">' + day.summary + '</div>' : '') +
+    '<div class="daycard-cols">' +
+      '<div>' + (leftCol || '<div class="dc-block dc-stay">No fixed plan yet for this day.</div>') + '</div>' +
+      '<div>' + rightCol + '</div>' +
+    '</div>';
+
+  dayCardEl.innerHTML = '';
+  dayCardEl.appendChild(card);
+  card.querySelectorAll('.dc-flight').forEach(el =>
+    el.addEventListener('click', () => showFlightModal(el.dataset.flight)));
+
+  // reflect active pill + hash
+  document.querySelectorAll('.day-pill').forEach(p =>
+    p.classList.toggle('active', p.dataset.key === key));
+  try { history.replaceState(null, '', '#day-' + key); } catch (e) { /* no-op outside a real URL */ }
+}
+
+// Build the day-selector strip
+ALL_DATES.forEach(({ m, d }) => {
+  const key = m + '-' + d;
+  const cmp = dayCmp(m, d);
+  const color = LEG_COLORS[legForDay(m, d)] || '#888';
+  const pill = document.createElement('button');
+  pill.className = 'day-pill' + (cmp === 0 ? ' is-today' : cmp < 0 ? ' is-past' : '');
+  pill.dataset.key = key;
+  pill.style.setProperty('--day-color', color);
+  pill.innerHTML =
+    '<div class="dp-dow">' + DAY_NAMES[getDow(m, d)] + '</div>' +
+    '<div class="dp-num">' + d + '</div>' +
+    '<div class="dp-mon">' + MON_ABBR[m] + '</div>';
+  pill.addEventListener('click', () => renderDayCard(m, d));
+  dayStripEl.appendChild(pill);
+});
+
+// Initial day: hash → today → first trip day
+(function initDay() {
+  let start = ALL_DATES[0];
+  const hash = (location.hash.match(/^#day-(\d+)-(\d+)$/));
+  if (hash) {
+    const m = +hash[1], d = +hash[2];
+    if (ALL_DATES.some(x => x.m === m && x.d === d)) start = { m, d };
+  } else {
+    const today = ALL_DATES.find(({ m, d }) => dayCmp(m, d) === 0);
+    if (today) start = today;
+  }
+  renderDayCard(start.m, start.d);
+  const activePill = document.querySelector('.day-pill.active');
+  if (activePill && activePill.scrollIntoView) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
+})();
 
 // ─────────────────────────────────────────────────────────────
 //  RENDER: CREW
