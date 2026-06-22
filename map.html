@@ -272,7 +272,13 @@ html, body { height: 100%; font-family: 'EB Garamond', Georgia, serif; }
       </div>
     </div>
     <div class="side-legs" id="legs"></div>
-    <div class="side-note">Tap a leg to fly there on the map. Solid lines — sailing &amp; ground. Dashed — flights &amp; transit.</div>
+    <div class="side-note">
+      <div style="font-weight:600;color:#C8881C;letter-spacing:.06em;margin-bottom:7px;">ROUTE</div>
+      <div class="epic-legend-row"><span style="display:inline-block;width:24px;border-top:4px solid #B5651D;margin-right:8px;vertical-align:middle;"></span> Road / riding</div>
+      <div class="epic-legend-row"><span style="display:inline-block;width:24px;border-top:3px dotted #1C6CA8;margin-right:8px;vertical-align:middle;"></span> Ferry / sailing</div>
+      <div class="epic-legend-row"><span style="display:inline-block;width:24px;border-top:2.5px dashed #8291AE;margin-right:8px;vertical-align:middle;"></span> Flight (curved arc)</div>
+      <p style="margin-top:8px;">Tap a leg to fly there. Lines trace the planned road, ferry &amp; flight paths.</p>
+    </div>
     <div class="side-back"><a href="index.html">← Back to Trip Hub</a></div>
   </div>
   <div id="map"></div>
@@ -367,17 +373,79 @@ flatStops.forEach(s => {
   allLL.push([s.lat, s.lng]);
 });
 
-// Lines
-for (let i = 0; i < flatStops.length - 1; i++) {
-  const a = flatStops[i], b = flatStops[i+1];
-  const sameLeg = a.li === b.li;
-  L.polyline([[a.lat,a.lng],[b.lat,b.lng]], {
-    color:     sameLeg ? a.color : '#8291AE',
-    weight:    sameLeg ? 4 : 2.5,
-    opacity:   sameLeg ? 0.88 : 0.6,
-    dashArray: sameLeg ? null : '7,9',
-  }).addTo(map);
+// ── ROUTE SEGMENTS (mode-aware: road / ferry / flight) ──────
+const BY_NAME = {};
+flatStops.forEach(s => { BY_NAME[s.name] = [s.lat, s.lng]; });
+
+// Quadratic-bezier arc bulging perpendicular to travel — gives flights a
+// great-circle-ish curve instead of a flat straight line.
+function arc(a, b, bulge) {
+  const [la1, ln1] = a, [la2, ln2] = b;
+  const dx = ln2 - ln1, dy = la2 - la1;
+  const len = Math.hypot(dx, dy) || 1;
+  const ox = -dy / len, oy = dx / len;            // unit perpendicular
+  const k = (bulge == null ? 0.16 : bulge) * len; // control-point offset
+  const clat = (la1 + la2) / 2 + oy * k;
+  const clng = (ln1 + ln2) / 2 + ox * k;
+  const pts = [];
+  for (let t = 0; t <= 48; t++) {
+    const u = t / 48, v = 1 - u;
+    pts.push([
+      v*v*la1 + 2*v*u*clat + u*u*la2,
+      v*v*ln1 + 2*v*u*clng + u*u*ln2,
+    ]);
+  }
+  return pts;
 }
+
+const MODES = {
+  road:   { color:'#B5651D', weight:4.5, opacity:0.9,  dash:null   },
+  ferry:  { color:'#1C6CA8', weight:3,   opacity:0.9,  dash:'1,10' },
+  flight: { color:'#8291AE', weight:2.5, opacity:0.85, dash:'9,11' },
+};
+
+// Ordered journey. `via` = intermediate [lat,lng] waypoints that trace the
+// real road / sea geography so a segment doesn't cut across land or water.
+const SEGMENTS = [
+  // Grant & Brandel join the crew at İzmir by air
+  { from:'Lisbon, Portugal',      to:'İzmir, Türkiye',          mode:'flight', faint:true },
+  // Main crew
+  { from:'Naples, Italy',         to:'Istanbul, Türkiye',       mode:'flight' },                                  // TK1880
+  { from:'Istanbul, Türkiye',     to:'Çanakkale, Türkiye',      mode:'road',  via:[[40.978,27.511],[40.410,26.673]] }, // Tekirdağ · Gelibolu · Çanakkale Bridge
+  { from:'Çanakkale, Türkiye',    to:'Mount Ida (Kaz Dağı)',    mode:'road',  via:[[39.790,26.337]] },             // Ezine
+  { from:'Mount Ida (Kaz Dağı)',  to:'Cunda (Ayvalık)',         mode:'road',  via:[[39.595,27.018]] },             // Edremit gulf
+  { from:'Cunda (Ayvalık)',       to:'Sığacık, Türkiye',        mode:'road',  via:[[38.930,26.935],[38.492,26.974]] }, // Çandarlı · Menemen
+  { from:'Sığacık, Türkiye',      to:'İzmir, Türkiye',          mode:'road',  via:[[38.323,26.764]] },             // Urla
+  { from:'İzmir, Türkiye',        to:'Çeşme, Türkiye',          mode:'road',  via:[[38.323,26.764]] },             // Urla peninsula → ferry port
+  { from:'Çeşme, Türkiye',        to:'Chios, Greece',           mode:'ferry' },
+  { from:'Chios, Greece',         to:'Samos, Greece',           mode:'ferry' },
+  { from:'Samos, Greece',         to:'Mykonos, Greece',         mode:'ferry' },
+  { from:'Mykonos, Greece',       to:'Santorini, Greece',       mode:'ferry' },
+  { from:'Santorini, Greece',     to:'Heraklion, Crete',        mode:'ferry' },
+  { from:'Heraklion, Crete',      to:'Chania, Crete',           mode:'road',  via:[[35.366,24.474]] },             // Rethymno
+  { from:'Chania, Crete',         to:'Ithaca, Greece',          mode:'ferry', via:[[35.900,23.400],[36.450,23.050],[37.300,21.350]] }, // round the Peloponnese into the Ionian
+  { from:'Ithaca, Greece',        to:'Bilbao, Spain',           mode:'flight' },
+  { from:'Bilbao, Spain',         to:'Picos de Europa',         mode:'road' },
+  { from:'Picos de Europa',       to:'Pamplona, Spain',         mode:'road' },
+  { from:'Pamplona, Spain',       to:'San Sebastián (Donostia)',mode:'road' },
+  { from:'San Sebastián (Donostia)', to:'Bilbao — fly out',     mode:'road' },
+  { from:'Bilbao — fly out',      to:'Nürnberg, Germany',       mode:'flight' },
+];
+
+SEGMENTS.forEach(seg => {
+  const a = BY_NAME[seg.from], b = BY_NAME[seg.to];
+  if (!a || !b) { console.warn('route gap:', seg.from, '→', seg.to); return; }
+  const st = MODES[seg.mode];
+  const pts = seg.mode === 'flight' ? arc(a, b) : [a, ...(seg.via || []), b];
+  L.polyline(pts, {
+    color: st.color,
+    weight: st.weight,
+    opacity: seg.faint ? 0.4 : st.opacity,
+    dashArray: st.dash,
+    lineJoin: 'round',
+    lineCap: 'round',
+  }).addTo(map);
+});
 
 map.fitBounds(allLL, {padding:[50,50]});
 
