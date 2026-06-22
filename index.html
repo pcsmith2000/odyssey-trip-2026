@@ -348,6 +348,12 @@ footer p {
 .dc-list li { font-family: 'EB Garamond', serif; font-size: 13.5px; color: #4A3D24; line-height: 1.5; padding-left: 14px; position: relative; margin-bottom: 4px; }
 .dc-list li::before { content: '◆'; position: absolute; left: 0; color: var(--day-color, #888); font-size: 8px; top: 4px; }
 .dc-stay { font-family: 'EB Garamond', serif; font-size: 13.5px; color: #555; }
+.dc-picks-wrap { margin-top: 18px; }
+.dc-picks li { margin-bottom: 7px; }
+.dc-picks li strong { font-weight: 600; color: var(--ink); }
+.dc-pick-cat { font-family: 'Cinzel', serif; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.dc-pick-link { font-size: 11px; color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--muted); white-space: nowrap; }
+.dc-pick-link:hover { color: var(--crimson); border-bottom-color: var(--crimson); }
 
 /* ── IDEAS BOARD ──────────────────────────────────────────── */
 .idea-add { display: flex; gap: 10px; margin-bottom: 8px; }
@@ -1191,6 +1197,20 @@ function renderDayCard(m, d) {
     rightCol += '<div class="dc-block"><h4>Notes</h4><div class="dc-stay">' + day.notes + '</div></div>';
   }
 
+  let picksBlock = '';
+  if ((day.picks || []).length) {
+    picksBlock =
+      '<div class="dc-block dc-picks-wrap"><h4>Local picks</h4><ul class="dc-list dc-picks">' +
+      day.picks.map(p =>
+        '<li>' +
+        (p.cat ? '<span class="dc-pick-cat">' + p.cat + '</span>' : '') +
+        '<strong>' + p.name + '</strong>' +
+        (p.note ? ' — ' + p.note : '') +
+        (p.link ? ' <a class="dc-pick-link" href="' + p.link + '" target="_blank" rel="noopener">source</a>' : '') +
+        '</li>'
+      ).join('') + '</ul></div>';
+  }
+
   card.innerHTML =
     '<div class="daycard-head">' +
       '<span class="daycard-date">' + dateLabel + '</span>' +
@@ -1201,7 +1221,8 @@ function renderDayCard(m, d) {
     '<div class="daycard-cols">' +
       '<div>' + (leftCol || '<div class="dc-block dc-stay">No fixed plan yet for this day.</div>') + '</div>' +
       '<div>' + rightCol + '</div>' +
-    '</div>';
+    '</div>' +
+    picksBlock;
 
   dayCardEl.innerHTML = '';
   dayCardEl.appendChild(card);
