@@ -432,6 +432,29 @@ const SEGMENTS = [
   { from:'Bilbao — fly out',      to:'Nürnberg, Germany',       mode:'flight' },
 ];
 
+// Directional arrowheads (➤ defaults to pointing east → rotate to bearing)
+function bearingDeg(p1, p2) {
+  const dx = (p2[1] - p1[1]) * Math.cos(p1[0] * Math.PI / 180);
+  const dy = (p2[0] - p1[0]);
+  return Math.atan2(-dy, dx) * 180 / Math.PI;
+}
+function addArrows(pts, color, faint) {
+  if (pts.length < 3) return;
+  const fracs = pts.length > 20 ? [0.3, 0.55, 0.8] : [0.55];
+  fracs.forEach(f => {
+    const i = Math.max(1, Math.min(pts.length - 2, Math.round(f * (pts.length - 1))));
+    const deg = bearingDeg(pts[i - 1], pts[i + 1]);
+    const icon = L.divIcon({
+      className: '',
+      iconSize: [16, 16], iconAnchor: [8, 8],
+      html: '<div style="color:' + color + ';opacity:' + (faint ? 0.5 : 0.95) +
+            ';font-size:15px;line-height:16px;transform:rotate(' + deg.toFixed(1) +
+            'deg);text-shadow:0 0 3px #FAF6EC,0 0 3px #FAF6EC;">➤</div>',
+    });
+    L.marker(pts[i], { icon, interactive: false, keyboard: false }).addTo(map);
+  });
+}
+
 SEGMENTS.forEach(seg => {
   const a = BY_NAME[seg.from], b = BY_NAME[seg.to];
   if (!a || !b) { console.warn('route gap:', seg.from, '→', seg.to); return; }
@@ -445,6 +468,7 @@ SEGMENTS.forEach(seg => {
     lineJoin: 'round',
     lineCap: 'round',
   }).addTo(map);
+  addArrows(pts, st.color, seg.faint);
 });
 
 map.fitBounds(allLL, {padding:[50,50]});
