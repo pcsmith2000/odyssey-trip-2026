@@ -385,6 +385,41 @@ footer p {
 .idea-empty { font-family: 'EB Garamond', serif; font-size: 13.5px; font-style: italic; color: var(--muted); }
 .idea-sub { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--crimson); margin: 18px 0 10px; }
 
+/* ── DAY PHOTOS ───────────────────────────────────────────── */
+.dc-photos { grid-column: 1 / -1; margin-top: 6px; }
+.dc-photos-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 11px; }
+.dc-photos-head h4 {
+  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--crimson); border: none; padding: 0; margin: 0;
+}
+.dc-up-btn {
+  font-family: 'Cinzel', serif; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  background: var(--crimson); color: #fff; border: none; padding: 6px 14px; border-radius: 2px;
+  cursor: pointer; transition: background 0.15s;
+}
+.dc-up-btn:hover { background: #6A1010; }
+.dc-up-btn:disabled { opacity: 0.55; cursor: default; }
+.dc-up-status { font-family: 'EB Garamond', serif; font-size: 12.5px; font-style: italic; color: var(--muted); }
+.dc-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.dc-thumb {
+  position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 3px; cursor: pointer;
+  background: #E8DCC0; border: 1px solid var(--parch2);
+}
+.dc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.25s; }
+.dc-thumb:hover img { transform: scale(1.06); }
+.dc-empty { font-family: 'EB Garamond', serif; font-size: 13px; font-style: italic; color: var(--muted); }
+
+/* lightbox */
+#lightbox {
+  display: none; position: fixed; inset: 0; z-index: 10000;
+  background: rgba(24,19,10,0.88); align-items: center; justify-content: center; padding: 24px;
+}
+#lightbox img { max-width: 100%; max-height: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.6); border-radius: 2px; }
+#lightbox .lb-close {
+  position: absolute; top: 18px; right: 24px; color: rgba(255,255,255,0.8);
+  font-family: 'Cinzel', serif; font-size: 30px; cursor: pointer; line-height: 1;
+}
+
 @media (max-width: 700px) {
   .hero-title-band h1 { font-size: 38px; }
   .sec-head { padding: 10px 16px; }
@@ -1203,6 +1238,16 @@ function renderDayCard(m, d) {
       '<div>' + rightCol + '</div>' +
     '</div>';
 
+  // Photos: shown for today + past days; uploads allowed for past days only.
+  const cmp = dayCmp(m, d);
+  if (cmp <= 0) {
+    const cols = card.querySelector('.daycard-cols');
+    const photoBlock = document.createElement('div');
+    photoBlock.className = 'dc-photos';
+    cols.appendChild(photoBlock);
+    mountPhotos(photoBlock, key, cmp < 0);
+  }
+
   dayCardEl.innerHTML = '';
   dayCardEl.appendChild(card);
   card.querySelectorAll('.dc-flight').forEach(el =>
@@ -1320,6 +1365,99 @@ ALL_DATES.forEach(({ m, d }) => {
 })();
 
 // ─────────────────────────────────────────────────────────────
+//  DAY PHOTOS  (Vercel Blob via /api · past days only)
+// ─────────────────────────────────────────────────────────────
+function ensureLightbox() {
+  let lb = document.getElementById('lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'lightbox';
+    lb.innerHTML = '<span class="lb-close" aria-label="Close">&times;</span><img alt="">';
+    lb.addEventListener('click', e => {
+      if (e.target === lb || e.target.classList.contains('lb-close')) closeLightbox();
+    });
+    document.body.appendChild(lb);
+  }
+  return lb;
+}
+function openLightbox(url) {
+  const lb = ensureLightbox();
+  lb.querySelector('img').src = url;
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (lb) { lb.style.display = 'none'; lb.querySelector('img').src = ''; }
+  document.body.style.overflow = '';
+}
+
+function mountPhotos(container, dayKey, canUpload) {
+  container.innerHTML =
+    '<div class="dc-photos-head"><h4>Photos</h4>' +
+    (canUpload
+      ? '<button class="dc-up-btn" type="button">＋ Add photos</button>' +
+        '<input type="file" accept="image/*" multiple hidden>'
+      : '') +
+    '<span class="dc-up-status"></span></div>' +
+    '<div class="dc-gallery"><span class="dc-empty">Loading…</span></div>';
+
+  const gallery = container.querySelector('.dc-gallery');
+  const status  = container.querySelector('.dc-up-status');
+
+  function load() {
+    fetch('/api/photos?day=' + encodeURIComponent(dayKey))
+      .then(r => r.json())
+      .then(data => {
+        const photos = (data && data.photos) || [];
+        if (!photos.length) {
+          gallery.innerHTML = '<span class="dc-empty">' +
+            (canUpload ? 'No photos yet — be the first to add one.' : 'No photos yet.') + '</span>';
+          return;
+        }
+        gallery.innerHTML = '';
+        photos.forEach(p => {
+          const t = document.createElement('div');
+          t.className = 'dc-thumb';
+          t.innerHTML = '<img loading="lazy" src="' + p.url + '" alt="Photo from ' + dayKey + '">';
+          t.addEventListener('click', () => openLightbox(p.url));
+          gallery.appendChild(t);
+        });
+      })
+      .catch(() => {
+        gallery.innerHTML = '<span class="dc-empty">Photo sharing becomes available once the site is deployed.</span>';
+      });
+  }
+  load();
+
+  if (canUpload) {
+    const btn = container.querySelector('.dc-up-btn');
+    const input = container.querySelector('input[type=file]');
+    btn.addEventListener('click', () => input.click());
+    input.addEventListener('change', async () => {
+      const files = Array.from(input.files || []);
+      if (!files.length) return;
+      btn.disabled = true;
+      let done = 0, failed = 0;
+      for (const file of files) {
+        status.textContent = 'Uploading ' + (done + failed + 1) + ' / ' + files.length + '…';
+        try {
+          const r = await fetch(
+            '/api/upload?day=' + encodeURIComponent(dayKey) + '&filename=' + encodeURIComponent(file.name),
+            { method: 'POST', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file });
+          if (r.ok) { done++; }
+          else { failed++; const e = await r.json().catch(() => ({})); status.textContent = e.error || 'Upload failed.'; }
+        } catch (e) { failed++; }
+      }
+      input.value = '';
+      btn.disabled = false;
+      if (!failed) status.textContent = done + ' photo' + (done === 1 ? '' : 's') + ' added.';
+      load();
+    });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
 //  RENDER: CREW
 // ─────────────────────────────────────────────────────────────
 const CREW_INFO = [
@@ -1387,7 +1525,7 @@ function closeFlightModal() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeFlightModal();
+  if (e.key === 'Escape') { closeFlightModal(); closeLightbox(); }
 });
 </script>
 

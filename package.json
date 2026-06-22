@@ -1,0 +1,10 @@
+{
+  "name": "odyssey-trip-2026",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Summer 2026 trip hub — static site with Vercel serverless photo upload.",
+  "dependencies": {
+    "@vercel/blob": "^2.4.1"
+  }
+}
