@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="odyssey-overlay.js"></script>
+<script src="road-geometry.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -459,7 +460,12 @@ SEGMENTS.forEach(seg => {
   const a = BY_NAME[seg.from], b = BY_NAME[seg.to];
   if (!a || !b) { console.warn('route gap:', seg.from, '→', seg.to); return; }
   const st = MODES[seg.mode];
-  const pts = seg.mode === 'flight' ? arc(a, b) : [a, ...(seg.via || []), b];
+  const key = seg.from + '→' + seg.to;
+  const baked = (window.ROAD_GEOMETRY || {})[key];
+  let pts;
+  if (seg.mode === 'flight')                 pts = arc(a, b);          // curved flight arc
+  else if (seg.mode === 'road' && baked)     pts = baked;              // real road geometry (OSRM)
+  else                                       pts = [a, ...(seg.via || []), b]; // ferry / fallback
   L.polyline(pts, {
     color: st.color,
     weight: st.weight,

@@ -1,0 +1,34 @@
+name: Build real road geometry
+
+on:
+  push:
+    branches: [claude/map-real-roads]
+    paths:
+      - scripts/build_roads.py
+      - .github/workflows/build-roads.yml
+      # deliberately NOT road-geometry.js — avoids re-triggering on the bot's own commit
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  roads:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch road geometry from OSRM
+        run: python3 scripts/build_roads.py
+
+      - name: Commit baked geometry if it changed
+        run: |
+          if git diff --quiet -- road-geometry.js; then
+            echo "No geometry changes."
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add road-geometry.js
+            git commit -m "Bake real road geometry from OSRM [skip ci]"
+            git push
+          fi
