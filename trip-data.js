@@ -302,9 +302,22 @@ window.TRIP = (function () {
       summary: 'Wind-down in Nürnberg before heading home. 🍺' },
   };
 
+  // Suggestions / ideas ---------------------------------------------------
+  // Shared "starter" ideas, committed in code so the whole crew sees them.
+  // Anything added on the page itself is saved per-browser (localStorage),
+  // so this list is the shared baseline everyone starts from.
+  //   text — the idea
+  //   tag  — optional short label (a leg id, a place, a theme)
+  const SUGGESTIONS = [
+    { text: 'Catch the sunset in Oia, Santorini before heading south to Crete', tag: 'islands' },
+    { text: 'Find a proper hammam in Istanbul on the free day', tag: 'istanbul' },
+    { text: 'Scout balcony / viewing spots in Pamplona early', tag: 'espana' },
+    { text: 'Build a pintxos shortlist for San Sebastián', tag: 'espana' },
+  ];
+
   // Convenience lookups ---------------------------------------------------
   const LEG_BY_ID = {};
   LEGS.forEach(l => { LEG_BY_ID[l.id] = l; });
 
-  return { CREW, LEG_COLORS, LEG_LABELS, LEG_SHORT, LEGS, LEG_BY_ID, FLIGHTS, DAYS };
+  return { CREW, LEG_COLORS, LEG_LABELS, LEG_SHORT, LEGS, LEG_BY_ID, FLIGHTS, DAYS, SUGGESTIONS };
 })();
