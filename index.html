@@ -355,42 +355,6 @@ footer p {
 .dc-pick-link { font-size: 11px; color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--muted); white-space: nowrap; }
 .dc-pick-link:hover { color: var(--crimson); border-bottom-color: var(--crimson); }
 
-/* ── IDEAS BOARD ──────────────────────────────────────────── */
-.idea-add { display: flex; gap: 10px; margin-bottom: 8px; }
-.idea-add input {
-  flex: 1; font-family: 'EB Garamond', serif; font-size: 15px; color: var(--ink);
-  background: var(--cream); border: 1px solid var(--parch2); border-radius: 2px;
-  padding: 11px 14px; outline: none; transition: border-color 0.15s;
-}
-.idea-add input:focus { border-color: var(--gold); }
-.idea-btn {
-  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-  background: var(--crimson); color: #fff; border: none; padding: 0 20px; border-radius: 2px;
-  cursor: pointer; transition: background 0.15s;
-}
-.idea-btn:hover { background: #6A1010; }
-.idea-note { font-family: 'EB Garamond', serif; font-size: 12.5px; font-style: italic; color: var(--muted); margin-bottom: 18px; }
-.idea-note code { font-style: normal; font-size: 11.5px; background: rgba(0,0,0,0.05); padding: 1px 5px; border-radius: 2px; }
-.idea-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-.idea-card {
-  background: var(--cream); border: 1px solid var(--parch2); border-left: 4px solid var(--idea-color, var(--gold));
-  border-radius: 2px; padding: 13px 15px; display: flex; align-items: flex-start; gap: 10px;
-}
-.idea-text { flex: 1; font-family: 'EB Garamond', serif; font-size: 14.5px; color: var(--ink); line-height: 1.45; }
-.idea-tag {
-  display: inline-block; font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.1em;
-  text-transform: uppercase; color: #fff; background: var(--idea-color, var(--gold));
-  padding: 2px 7px; border-radius: 2px; margin-top: 6px;
-}
-.idea-badge { font-family: 'Cinzel', serif; font-size: 7.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; display: inline-block; }
-.idea-del {
-  background: none; border: none; color: var(--muted); font-size: 17px; line-height: 1; cursor: pointer;
-  padding: 0 2px; flex: 0 0 auto; transition: color 0.15s;
-}
-.idea-del:hover { color: var(--crimson); }
-.idea-empty { font-family: 'EB Garamond', serif; font-size: 13.5px; font-style: italic; color: var(--muted); }
-.idea-sub { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--crimson); margin: 18px 0 10px; }
-
 @media (max-width: 700px) {
   .hero-title-band h1 { font-size: 38px; }
   .sec-head { padding: 10px 16px; }
@@ -584,6 +548,19 @@ footer p {
   </div>
 </div>
 
+<!-- ═══ BY THE DAY ═══════════════════════════════════════════ -->
+<div class="meander"></div>
+<div class="sec-head">
+  <h2>By the Day</h2>
+  <span class="sec-sub">Every day, synthesised</span>
+</div>
+<div class="content-band">
+  <div class="wrap">
+    <div class="day-strip" id="day-strip"></div>
+    <div id="day-card"></div>
+  </div>
+</div>
+
 <!-- ═══ ITINERARY ═══════════════════════════════════════════ -->
 <div class="meander"></div>
 <div class="sec-head">
@@ -627,37 +604,6 @@ footer p {
 <div class="content-band">
   <div class="wrap">
     <div id="matrix"></div>
-  </div>
-</div>
-
-<!-- ═══ BY THE DAY ═══════════════════════════════════════════ -->
-<div class="meander"></div>
-<div class="sec-head">
-  <h2>By the Day</h2>
-  <span class="sec-sub">Every day, synthesised</span>
-</div>
-<div class="content-band">
-  <div class="wrap">
-    <div class="day-strip" id="day-strip"></div>
-    <div id="day-card"></div>
-  </div>
-</div>
-
-<!-- ═══ IDEAS & SUGGESTIONS ══════════════════════════════════ -->
-<div class="meander"></div>
-<div class="sec-head">
-  <h2>Ideas</h2>
-  <span class="sec-sub">A running list — jot down anything</span>
-</div>
-<div class="content-band">
-  <div class="wrap">
-    <form class="idea-add" id="idea-add">
-      <input type="text" id="idea-input" maxlength="240" autocomplete="off"
-        placeholder="Add an idea — a place, a meal, a detour…">
-      <button type="submit" class="idea-btn">＋ Add</button>
-    </form>
-    <p class="idea-note">Starter ideas are shared with the crew (edit them in <code>trip-data.js</code>). Anything you add here is saved in <em>your</em> browser.</p>
-    <div id="idea-list"></div>
   </div>
 </div>
 
@@ -1266,78 +1212,6 @@ ALL_DATES.forEach(({ m, d }) => {
   renderDayCard(start.m, start.d);
   const activePill = document.querySelector('.day-pill.active');
   if (activePill && activePill.scrollIntoView) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
-})();
-
-// ─────────────────────────────────────────────────────────────
-//  IDEAS BOARD  (shared seeds from trip-data.js + personal localStorage)
-// ─────────────────────────────────────────────────────────────
-(function ideasBoard() {
-  const SEEDS = TRIP.SUGGESTIONS || [];
-  const STORE_KEY = 'odyssey-ideas-v1';
-  const listEl = document.getElementById('idea-list');
-  const form = document.getElementById('idea-add');
-  const input = document.getElementById('idea-input');
-  if (!listEl || !form) return;
-
-  function loadMine() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
-    catch (e) { return []; }
-  }
-  function saveMine(arr) {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); } catch (e) { /* storage off */ }
-  }
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
-  }
-  function card(text, opts) {
-    opts = opts || {};
-    const color = opts.tag && LEG_COLORS[opts.tag] ? LEG_COLORS[opts.tag] : 'var(--gold)';
-    const label = opts.tag && LEG_LABELS[opts.tag] ? LEG_LABELS[opts.tag] : opts.tag;
-    return '<div class="idea-card" style="--idea-color:' + color + '">' +
-      '<div class="idea-text">' + esc(text) +
-        (opts.shared ? '<br><span class="idea-badge">★ shared</span>' : '') +
-        (label ? ' <span class="idea-tag">' + esc(label) + '</span>' : '') +
-      '</div>' +
-      (opts.idx != null ? '<button class="idea-del" title="Remove" data-idx="' + opts.idx + '">&times;</button>' : '') +
-      '</div>';
-  }
-
-  function render() {
-    const mine = loadMine();
-    let html = '';
-    if (SEEDS.length) {
-      html += '<div class="idea-grid">' +
-        SEEDS.map(s => card(s.text, { tag: s.tag, shared: true })).join('') + '</div>';
-    }
-    html += '<div class="idea-sub">Your ideas</div>';
-    if (mine.length) {
-      html += '<div class="idea-grid">' +
-        mine.map((m, i) => card(m.text, { tag: m.tag, idx: i })).join('') + '</div>';
-    } else {
-      html += '<div class="idea-empty">Nothing yet — add the first one above.</div>';
-    }
-    listEl.innerHTML = html;
-    listEl.querySelectorAll('.idea-del').forEach(btn =>
-      btn.addEventListener('click', () => {
-        const arr = loadMine();
-        arr.splice(+btn.dataset.idx, 1);
-        saveMine(arr);
-        render();
-      }));
-  }
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
-    const arr = loadMine();
-    arr.push({ text, ts: Date.now() });
-    saveMine(arr);
-    input.value = '';
-    render();
-  });
-
-  render();
 })();
 
 // ─────────────────────────────────────────────────────────────
