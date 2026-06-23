@@ -1,0 +1,12 @@
+# Node
+node_modules/
+
+# Python (road-geometry build script)
+__pycache__/
+*.pyc
+
+# WhatsApp bot — local secrets & runtime state (NEVER commit these)
+bot/node_modules/
+bot/auth_info/
+bot/data/
+bot/.env
